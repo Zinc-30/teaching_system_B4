@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------
 
 #连接到实时索引，使用MySQL41协议
+echo "link\n";
 $link = mysql_connect('localhost:9306') or die('connect bad');
 if (!$link) {
     echo mysql_errno() . ": " . mysql_error(). "\n";
