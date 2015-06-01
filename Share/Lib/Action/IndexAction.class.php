@@ -59,13 +59,41 @@ class IndexAction extends Action {
 	    }
     }
 
+    public function file_down(){
+    	$file = __ROOT__.'/Upload/math/1.txt';
+		var_dump($file);
+	　　$filename = $file;
+	　　header("Content-type: application/octet-stream");
+	　　//处理中文文件名
+	　　$ua = $_SERVER["HTTP_USER_AGENT"];
+	　　$encoded_filename = urlencode($filename);
+	　　$encoded_filename = str_replace("+", "%20", $encoded_filename);
+	　　if (preg_match("/MSIE/", $ua)) {
+	　　header('Content-Disposition: attachment; filename="' . $encoded_filename . '"');
+	　　} else if (preg_match("/Firefox/", $ua)) {
+	　　header("Content-Disposition: attachment; filename*=\"utf8''" . $filename . '"');
+	　　} else {
+	　　header('Content-Disposition: attachment; filename="' . $filename . '"');
+	　　}
+	　　header('Content-Disposition: attachment; filename="' . $filename . '"');
+	　　header("Content-Length: ". filesize($file));
+	　　readfile($file);
+    }
+ //注：字段file_zip需要使用ZipArchive打包存储
+
+
     public function addresdir(){
+    	$basedir = __APP__.'/upload';
+    	$classname = "math";
     	$newdir = D('Resdir');
     	dump($_POST);
     	if ($newdir->create()){
 			$result = $newdir->add();
 			if($result) {
-                $this->success('操作成功！');
+				if (mkdir($basedir.'/'.$classname.'/'.$_POST['name'])){
+					echo $basedir.$classname.$_POST['name'];
+				}
+                //$this->success('操作成功！');
             }else{
                 $this->error('写入错误！');
             }
