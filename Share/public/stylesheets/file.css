@@ -1,0 +1,43 @@
+th.active .arrow {
+  opacity: 1;
+}
+
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0.66;
+}
+
+.arrow.asc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #fff;
+}
+
+.arrow.dsc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}
+
+.file-tag {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.file-tag > .icon-remove,
+.file-tag > .icon-chevron-right {
+  margin-left: 5px;
+}
+
+.fileRow {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.opIcon {
+  margin-right: 10px;
+}
