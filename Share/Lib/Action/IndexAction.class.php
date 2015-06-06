@@ -2,18 +2,20 @@
 // 本类由系统自动生成，仅供测试用途
 
 class IndexAction extends Action {
+    
     public function index(){
-	$this->show('<style type="text/css">*{ padding: 0; margin: 0; } div{ padding: 4px 48px;} body{ background: #fff; font-family: "微软雅黑"; color: #333;} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.8em; font-size: 36px }</style><div style="padding: 24px 48px;"> <h1>:)</h1><p>欢迎使用 <b>ThinkPHP</b>！</p></div><script type="text/javascript" src="http://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script>','utf-8');
+		//$this->show('<style type="text/css">*{ padding: 0; margin: 0; } div{ padding: 4px 48px;} body{ background: #fff; font-family: "微软雅黑"; color: #333;} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.8em; font-size: 36px }</style><div style="padding: 24px 48px;"> <h1>:)</h1><p>欢迎使用 <b>ThinkPHP</b>！</p></div><script type="text/javascript" src="http://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script>','utf-8');
+    	
+    	$this->display();
     }
 
     public function new_file(){
     	echo ('new_file');
     	$this->display();
     }
-	// 文件上传
-    public function upload(){
+	// 文件上传 （乱码问题）
+    public function file_upload(){
     	echo ('upload');
-    	
     	import('ORG.Net.UploadFile');
 	    $upload = new UploadFile();// 实例化上传类
 	    $upload->maxSize  = 3145728 ;// 设置附件上传大小
@@ -59,8 +61,8 @@ class IndexAction extends Action {
 	        //$this->success('上传成功！');
 	    }
     }
-    //文件下载
-    public function file_down(){
+    //文件下载 (多个文件压缩，文件夹)
+    public function file_download(){
     	$file_url = 'E:\Project\www\teaching_system_B4\Upload\math\1.txt';
 		var_dump($file_url);
 		if(!isset($file_url)||trim($file_url)==''){
@@ -85,9 +87,10 @@ class IndexAction extends Action {
     }
  //注：字段file_zip需要使用ZipArchive打包存储
 
-    //新建资源夹，作业夹
+    //新建资源夹，作业夹（json格式交互）
     public function addresdir(){
     	$basedir = __APP__.'/upload';
+    	var_dump($basedir);
     	$classname = "math";
     	$newdir = D('Resdir');
     	dump($_POST);
@@ -107,7 +110,7 @@ class IndexAction extends Action {
     }
 
     //新建资源作业文件夹
-    public function like(){
+    public function dir_add(){
     	$coursename = 'math';
     	$base_dir = getcwd();
     	var_dump($base_dir);
@@ -118,19 +121,19 @@ class IndexAction extends Action {
 		      echo $flist."<br/>";
 		}
 		closedir($fso);
-		mkdir($couse_dir.'\test2');
-		
+		//mkdir($couse_dir.'\test2');
 	}
 
-    //全文搜索
+    //全文搜索 (index定期更新，json)
     public function search(){
+    	$query = "include"
     	require ( "sphinxapi.php" );
 		$cl = new SphinxClient ();
 		$cl->SetServer ( '127.0.0.1', 9312);
 		$cl->SetConnectTimeout ( 3 );
 		$cl->SetArrayResult ( true );
 		$cl->SetMatchMode ( SPH_MATCH_ANY);
-		$res = $cl->Query ( 'include', "res_index" );
+		$res = $cl->Query ( $query, "res_index" );
 		// print_r($cl);
 		var_dump($res);
     }
