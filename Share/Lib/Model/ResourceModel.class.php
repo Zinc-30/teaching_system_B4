@@ -7,63 +7,7 @@
  *****************************************************/
 
 class ResourceModel extends Model {
-	/**
-	 * 该资源ID
-	 * 
-	 * @var int
-	 */
-	protected $id;
 	
-	/**
-	 *  资源库名
-	 *  
-	 * @var string
-	 */
-	protected $name;
-
-	/**
-	 * 所属文件目录id
-	 *
-	 * @var int
-	 */
-	protected $category;
-
-	/**
-	 * 资源简介
-	 * @var string
-	 */
-	protected $description;
-
-	/**
-	 * 资源内容
-	 * @var string
-	 */
-	protected $context;
-
-	/**
-	 * 点赞次数
-	 * @var int 
-	 */
-	protected $hits;
-
-	/**
-	 * 添加时间
-	 * @var int 
-	 */
-	protected $addtime;
-	
-	/**
-	 * 总数目
-	 * @var int 
-	 */
-	protected $returnAmount;
-
-	
-	/**
-	 * 返回查询结果总数
-	 * 
-	 * @return int 结果总数
-	 */
 	public function getReturnAmount() {
 		return $this->returnAmount;
 	}
@@ -179,4 +123,83 @@ class ResourceModel extends Model {
 		
 		return $this->save($data, $condition);
 	}
+
+	public function file_upload($fid){
+		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
+		$path = $dir[0][url].'/'; //code transe$dir[0].;
+    	import('ORG.Net.UploadFile');
+	    $upload = new UploadFile();// 实例化上传类
+	    $upload->maxSize  = 3145728 ;// 设置附件上传大小
+	    $upload->allowExts  = array('docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+	    $upload->savePath =  $path;// 设置附件上传目录
+	    $upload->saveRule = '';
+	    if(!$upload->upload()) {// 上传错误提示错误信息
+	        //$this->error($upload->getErrorMsg());
+	    }else{// 上传成功
+	    	//提取数据
+	    	$info = $upload->getUploadFileInfo();
+	    	if ($info[0]['type'] == 'text/plain'){// txt文件内容读取
+	    		$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
+	    		$context = file_get_contents($fname);
+	    		$context = iconv("GB2312", "UTF-8", $context); 
+	    	}
+	    	if ($info[0]['type'] == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){// txt文件内容读取
+	    		// 建立一个指向新COM组件的索引 
+				$word = new COM("word.application") or die("五法打开 MS Word"); 
+				// 显示目前正在使用的Word的版本号 
+				echo "Loading Word, v. {$word->Version}<br>"; 
+				// 把它的可见性设置为0（假），如果要使它在最前端打开，使用1（真） 
+				// to open the application in the forefront, use 1 (true) 
+				$word->Visible = 0; 
+				//打?一个文档 
+				$word->Documents->Open("E:/1.docx") or die("无法打开这个文件"); 
+				//读取文档内容 
+				$test = $word->ActiveDocument->content->Text; 
+				dump($test);  
+				// 关闭与COM组件之间的连接 
+				$word->Quit(); 
+				$word = null;
+	    	}
+	    	$data = array(
+	    		'name' 			=>	$info[0][savename] ,
+	    		'category' 		=>	$fid,
+	    		'context'		=>	$context,
+	    		'hits'			=>	0
+	    	 );
+	    	dump($info);
+	    	dump($data);
+	    	$resource = D('Resource');
+	    	$rid = $resource->data($data)->add($data);
+	        //$this->success('上传成功！');
+	        return $rid;
+	    }
+    }
+    //文件下载 (多个文件压缩，文件夹)
+    public function file_download($rid){
+    	$info = D('Resource')->where('id='.$rid)->field('fid,name')->select();
+		$dir = D('Resdir')->where('id='.$info[0]['fid'])->field('url')->select();
+    	$file_url = $dir[0]['url']."/".$info[0]['name'];
+		if(!isset($file_url)||trim($file_url)==''){
+			return '500';
+		}
+		if(!file_exists($file_url)){ //检查文件是否存在
+			return '404';
+		}
+		$file_name=basename($file_url);
+		$file_type=explode('.',$file_url);
+		$file_type=$file_type[count($file_type)-1];
+		$file_name=trim($new_name=='')?$file_name:urlencode($new_name).'.'.$file_type;
+		$file_type=fopen($file_url,'r'); //打开文件
+		//输入文件标签
+		header("Content-type: application/octet-stream");
+		header("Accept-Ranges: bytes");
+		header("Accept-Length: ".filesize($file_url));
+		header("Content-Disposition: attachment; filename=".$file_name);
+		//输出文件内容
+		echo fread($file_type,filesize($file_url));
+		fclose($file_type);
+    }
+
+
+    
 }

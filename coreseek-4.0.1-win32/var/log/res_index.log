@@ -1,2 +1,6 @@
 [Sat May 30 00:21:41.662 2015] [ 4464] accepting connections
 [Sat May 30 00:21:55.378 2015] 0.004 sec [any/0/rel 1 (0,20)] [res_index] include
+[Mon Jun  8 22:02:22.978 2015] [ 7656] accepting connections
+[Mon Jun  8 22:04:28.019 2015] 0.274 sec [any/0/rel 1 (0,20)] [res_index] include
+[Mon Jun  8 23:13:09.546 2015] [ 7656] caught SIGTERM, shutting down
+[Mon Jun  8 23:13:09.624 2015] [ 7656] shutdown complete

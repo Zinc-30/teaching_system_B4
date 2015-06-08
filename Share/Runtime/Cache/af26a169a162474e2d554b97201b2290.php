@@ -1,5 +1,5 @@
 <?php if (!defined('THINK_PATH')) exit();?><html>
-	<form id="upload" method='post' action="<?php echo U('file_upload');?>" enctype="multipart/form-data">
+	<form id="upload" method='post' action="<?php echo U('uploadfile');?>" enctype="multipart/form-data">
 	<input name="1" type="file" />
 	<input type="submit" value="提交" >
 	</form>
