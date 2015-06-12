@@ -16,15 +16,20 @@ class IndexAction extends Action {
     }
     
 	// 文件上传 （乱码问题）
-	public function hello($s){
-		echo $s;
-	}
+	
     
 
     //新建资源作业文件夹
     public function test(){
     	//$did = $this->resdir_add(31,"t1","asa");
-    	$this->dir_get(23);
+        $ls = D('Resdir');
+        $res = D('Resource');
+        $hw = D('Homework');
+        //$hwdir = $ls->dir_delete(35);
+        //$hwdir = $ls->homework_add(24,'作业1','test',234);
+        $hw->file_change(2,'3.txt');
+        //var_dump($hwdir);
+    	//$this->dir_get(23);
     }
     
     //全文搜索 (index定期更新，json)
@@ -45,15 +50,18 @@ class IndexAction extends Action {
     	echo ('uploadfile');
     	var_dump($_POST);
     	$this->hello("hi");
-    	$file = new ResourceModel();
-    	$rid  = $file->file_upload(24);
+        $ls = D('Resdir');
+        $res = D('Resource');
+        $hw = D('Homework');
+    	$rid  = $res->file_upload(36,3);
     }
 
     public function downloadfile(){
     	echo ('downloadfile');
-    	var_dump($_POST);
     	$this->hello("hi");
-    	$file = new ResourceModel();
-    	$rid  = $file->file_download(20);
+        $ls = D('Resdir');
+        $res = D('Resource');
+        $hw = D('Homework');
+    	$rid  = $hw->file_download(1);
     }
 }

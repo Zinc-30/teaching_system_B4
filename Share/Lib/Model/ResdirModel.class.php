@@ -89,16 +89,14 @@ class ResdirModel extends Model {
     	}
     }
     //在一个目录中增加目录，输入当前目录id，新的目录名[,描述]，输出目录id
-    public function resdir_add($fid,$dname,$descrip){
-		$d0 = D('Resdir');
-		$fdir = $d0->where("id=".$fid)->select();
+    public function resdir_add($fid,$dname,$descrip,$uploader){
+		$d = D('Resdir');
+		$fdir = $d->where("id=".$fid)->select();
     	$fpath = $fdir[0]['url'];
     	$cid = $fdir[0]['cid'];
-    	var_dump($fpath);
     	$newdir = $fpath.'/'.$dname;
     	$ok = $this->dir_add($newdir);
     	if ($ok) {
-    		$d = D('Resdir');
     		$data = array(
 	    		'name' 			=>	$dname,
 	    		'fid' 			=>	$fid,
@@ -106,12 +104,27 @@ class ResdirModel extends Model {
 	    		'url'			=>	$newdir,
 	    		'descrip'		=>	$descrip
 	    	 );
+            if ($uploader) $data['uploader'] = $uploader;
+            var_dump($data);
     		$id = $d->data($data)->add($data);
     		return $id;
     	}
     	else {
     		echo "已存在";
     	}
+    }
+    
+    public function homework_add($fid,$dname,$descrip,$ddl){
+        $ok = $this->resdir_add($fid,$dname,$descrip);
+        var_dump($ok);
+        if ($ok){
+            $data = array(
+                'ddl'       =>  $ddl,
+                'homework'  =>  true
+             );
+            $d = D('Resdir')->where('id='.$ok)->save($data);
+            return $ok;
+        }
     }
 
 
@@ -122,7 +135,8 @@ class ResdirModel extends Model {
     	var_dump($fdir);
     	$dir = $fdir[0]['url'];
 	  	$deldir = iconv("UTF-8", "GB2312", $dir); //code transe
-    	$ok = 1;//$this->dir_del($deldir);
+        var_dump($deldir);
+    	$ok = $this->dir_del($deldir);
     	if ($ok){
     		$dellist = array();
     		$dellist[] = $fid;
