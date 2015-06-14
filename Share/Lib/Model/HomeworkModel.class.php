@@ -49,17 +49,19 @@ class HomeworkModel extends Model {
 	    }else{// 上传成功
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
-	    	$data = array(
-	    		'name' 			=>	$info[0][savename] ,
-	    		'fid' 		=>	$fid,
-	    		'student_id'	=>	$sid,
-	    	 );
-	    	var_dump($data);
-	    	$hw = D('Homework');
-	    	$rid = $hw->data($data)->add($data);
-	    	var_dump($rid);
-	        //$this->success('上传成功！');
-	        return $rid;
+			$in = D('Homework')->where('fid='.$fid && 'name='.$info[0][savename])->select();
+	    	if (!$in){
+	    		$data = array(
+		    		'name' 			=>	$info[0][savename] ,
+		    		'fid' 		=>	$fid,
+		    		'student_id'	=>	$sid,
+		    	 );
+		    	var_dump($data);
+		    	$rid = D('Homework')->data($data)->add($data);
+		    	var_dump($rid);
+		        //$this->success('上传成功！');
+		        return $rid;
+	    	}
 	    }
     }
     //文件下载 (多个文件压缩，文件夹)

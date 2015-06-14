@@ -36,6 +36,10 @@ class IndexAction extends Action {
         $fid = (int)$_POST['fid'];
         var_dump($_POST);
         $rid = D('Resource')->file_upload($fid);
+        $data = D('Resdir')->dir_get($fid);
+        var_dump($data);
+        $ans = json_encode($data);
+        echo $ans;
     }
 
     
@@ -62,7 +66,10 @@ class IndexAction extends Action {
         $name = $_POST['name'];
         $res = D('Resdir');
         $res->resdir_add($fid,$name);
-        echo "1";
+        $data = D('Resdir')->dir_get($fid);
+        var_dump($data);
+        $ans = json_encode($data);
+        echo $ans;
     }
     
     //全文搜索 (index定期更新，json)

@@ -56,21 +56,26 @@ class ResourceModel extends Model {
 	    }else{// 上传成功
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
-	    	if ($info[0]['type'] == 'text/plain'){// txt文件内容读取
+	    	$in = D('Resource')->where('fid='.$fid && 'name='.$info[0][savename])->select();
+	    	echo "xin";
+	    	var_dump($in);
+	    	if (!$in){
+	    		if ($info[0]['type'] == 'text/plain'){// txt文件内容读取
 	    		$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
 	    		$context = file_get_contents($fname);
 	    		$context = iconv("GB2312", "UTF-8", $context); 
+		    	}
+		    	$data = array(
+		    		'name' 			=>	$info[0][savename] ,
+		    		'fid' 		=>	$fid,
+		    		'context'		=>	$context,
+		    		'hits'			=>	0
+		    	 );
+		    	$resource = D('Resource');
+		    	$rid = $resource->data($data)->add($data);
+		        //$this->success('上传成功！');
+		        return $rid;
 	    	}
-	    	$data = array(
-	    		'name' 			=>	$info[0][savename] ,
-	    		'fid' 		=>	$fid,
-	    		'context'		=>	$context,
-	    		'hits'			=>	0
-	    	 );
-	    	$resource = D('Resource');
-	    	$rid = $resource->data($data)->add($data);
-	        //$this->success('上传成功！');
-	        return $rid;
 	    }
     }
     //文件下载 (多个文件压缩，文件夹)
