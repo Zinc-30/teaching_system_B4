@@ -41,6 +41,20 @@ Vue.component('demo-grid', {
       for (var i = 0; i < this.data.length; i++) {
         this.generatePic(this.data[i]);
       }
+      $.ajax({
+        url: '/teaching_system_B4/index.php/Index/test',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          id: 1000,
+        },
+        success: function(res){
+          alert(res);
+        },
+        error: function(res, status, e){
+          alert(status + e);
+        }
+      });
     },
 
     sortBy: function (key) {

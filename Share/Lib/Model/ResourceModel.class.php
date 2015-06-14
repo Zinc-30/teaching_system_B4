@@ -31,6 +31,19 @@ class ResourceModel extends Model {
 		return $this->where('id='.$id)->save($data);
 	}
 
+	public function file_del($id) {
+		if (!$this->id) {
+			return 0;
+		}
+		$ans = D('Resource')->where('id='.$id)->field('fid,name')->select();
+		$fid = $ans[0]['fid'];
+		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
+		$path = $dir[0]['url'].'/'; //code transe$dir[0].;
+		$oldname = iconv("UTF-8", "GB2312", $path.$ans[0]['name']);
+		$ok = unlink($oldname);
+		return $ok;
+	}
+
 	public function file_upload($fid){
 		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
 		$path = $dir[0][url].'/'; //code transe$dir[0].;
@@ -93,7 +106,4 @@ class ResourceModel extends Model {
 		echo fread($file_type,filesize($file_url));
 		fclose($file_type);
     }
-
-
-    
 }

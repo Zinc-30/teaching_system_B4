@@ -5,6 +5,16 @@
  *       Filename: ResdirModel.class.php
  *    Description: 文件资源共享文件夹
  *****************************************************/
+// id
+// fid
+// cid
+// Description
+// name
+// url
+// homework
+// ddl
+// uploader
+// addtime
 
 class ResdirModel extends Model {
 		
@@ -89,7 +99,7 @@ class ResdirModel extends Model {
     	}
     }
     //在一个目录中增加目录，输入当前目录id，新的目录名[,描述]，输出目录id
-    public function resdir_add($fid,$dname,$descrip,$uploader){
+    public function resdir_add($fid,$dname,$descrip="",$uploader=""){
 		$d = D('Resdir');
 		$fdir = $d->where("id=".$fid)->select();
     	$fpath = $fdir[0]['url'];

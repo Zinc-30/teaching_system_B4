@@ -15,6 +15,9 @@ return array (
 'DISPATCH_ON'   => true,
 'DEBUG_MODE'    => true,
 'TMPL_CACHE_ON' => false,
+'APP_GROUP_LIST' => 'B4,B3', //项目分组设定
+'DEFAULT_GROUP'  => 'B4', //默认分组
+
 
 //Cookie 设置，兼UCenter同步登录设置
 // 'COOKIE_EXPIRE' => 3600,			// Coodie有效期
