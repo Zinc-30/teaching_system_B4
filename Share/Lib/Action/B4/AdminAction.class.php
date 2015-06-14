@@ -4,14 +4,14 @@
 
 class AdminAction extends Action {
     
-    public function index(){
+    public function indexinfo(){
     	$data = array();
         if($_POST['fid']==0){
             $data = D('Resdir')->dir_get($_POST['fid']);
-            var_dump($data);
+            //var_dump($data);
         }else{
             $data = D('Resdir')->dir_get($_POST['fid']);
-            var_dump($data);
+            //var_dump($data);
         }
         $ans = json_encode($data);
         echo $ans;
@@ -21,12 +21,14 @@ class AdminAction extends Action {
     public function deldir(){
         $dir = D('Resdir');
         $ok = $dir->dir_delete($_POST['id']);
+
     }
 
     public function delfile(){
         $res = D('Resource');
-        var_dump($_POST);
+        //var_dump($_POST);
         $ok = $res->file_del($_POST['id']);
+
     }
   	
 

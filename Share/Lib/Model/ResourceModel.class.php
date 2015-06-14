@@ -43,27 +43,28 @@ class ResourceModel extends Model {
 	}
 
 	public function file_upload($fid){
+
 		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
 		$path = $dir[0][url].'/'; //code transe$dir[0].;
     	import('ORG.Net.UploadFile');
 	    $upload = new UploadFile();// 实例化上传类
 	    $upload->maxSize  = 3145728 ;// 设置附件上传大小
-	    $upload->allowExts  = array('pdf','docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+	    $upload->allowExts  = array('pptx','ppt','pdf','docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
 	    $upload->savePath = $path;// 设置附件上传目录
 	    $upload->saveRule = '';
-	    var_dump($path);
+
+	    //var_dump($path);
 	    if(!$upload->upload()) {// 上传错误提示错误信息
+	    	echo "fail";
 	    }else{// 上传成功
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
-	    	$in = D('Resource')->where('fid='.$fid && 'name='.$info[0][savename])->select();
-	    	echo "xin";
-	    	var_dump($in);
-	    	if (!$in){
+	    	$in = D('Resource')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
+	    	if (count($in)==0){
 	    		if ($info[0]['type'] == 'text/plain'){// txt文件内容读取
-	    		$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
-	    		$context = file_get_contents($fname);
-	    		$context = iconv("GB2312", "UTF-8", $context); 
+	    			$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
+	    			$context = file_get_contents($fname);
+	    			$context = iconv("GB2312", "UTF-8", $context); 
 		    	}
 		    	$data = array(
 		    		'name' 			=>	$info[0][savename] ,

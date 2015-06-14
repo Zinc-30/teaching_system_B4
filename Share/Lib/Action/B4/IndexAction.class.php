@@ -13,37 +13,46 @@ class IndexAction extends Action {
         $this->display();
     }
 
+    public function userinfo(){
+        $data = array(
+                'userName' =>"xin" ,
+                'userType' =>2
+            );
+        $ans = json_encode($data);
+        echo $ans;
+    }
+
     public function indexinfo(){
         if($_POST['fid']==0){
             $sid = $_COOKIE['sid'];
-            var_dump($sid);
+            //var_dump($sid);
             $classlist = D('Student_course')->where('student_id='.$sid)->select();
-            var_dump($classlist);
+            //var_dump($classlist);
             $data = array();
             foreach ($classlist as $key => $value) {
                 $fid = D('Resdir')->where('cid='.$value['course_class_id'])->select();
-                var_dump($fid);
+                //var_dump($fid);
                 $data[$key]['id'] = $fid[0]['id'];
                 $data[$key]['name'] = $fid[0]['name'];
                 $data[$key]['is_folder'] = true;
             }
-            var_dump($data);
+            //var_dump($data);
         }else{
             $data = D('Resdir')->dir_get($_POST['fid']);
-            var_dump($data);
+            //var_dump($data);
         }
         $ans = json_encode($data);
         echo $ans;
     }
 
     public function uploadfile(){
+
         $fid = (int)$_POST['fid'];
-        var_dump($_POST);
         $rid = D('Resource')->file_upload($fid);
         $data = D('Resdir')->dir_get($fid);
-        var_dump($data);
         $ans = json_encode($data);
         echo $ans;
+        $this->success();
     }
 
     
@@ -71,7 +80,7 @@ class IndexAction extends Action {
         $res = D('Resdir');
         $res->resdir_add($fid,$name);
         $data = D('Resdir')->dir_get($fid);
-        var_dump($data);
+        //var_dump($data);
         $ans = json_encode($data);
         echo $ans;
     }

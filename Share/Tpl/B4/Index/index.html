@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+www.win<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -156,7 +156,7 @@
 
         <ul id="index-menu" class="nav nav-list collapse in">
             <li>
-                <a href={:U('index')}>所有目录</a>
+                <a href="/teaching_system_B4/index.php/Index/index">所有目录</a>
             </li>
             <li>
                 <a href={:U('work')}>作业</a>
@@ -191,11 +191,10 @@
         <div class="span2">
             <div class="btn-toolbar">
                 <a class="btn btn-info btn-create" href="#" role="button" data-toggle="modal" v-on="click: createDlgIn()">创建目录</a>
+                <a class="btn btn-info btn-create" href="#" role="button" data-toggle="modal" v-on="click: uploadDlgIn()">上传文件</a>
             </div>
         </div>
-        <div id="imp" class="span2" style="margin-top: 8px">
-            <input type="file" name="file_upload" id="file_upload" />
-        </div>
+
         <div class="span4">
             <div id="uploadDiv"></div>
         </div>
@@ -239,7 +238,7 @@
                           <div class="row-fluid" style="height: 30px">
                             <div class="span4" v-if="! entry['is_folder']">
                               <form action="/teaching_system_B4/index.php/Index/downloadfile" method="POST" target="formsubmit" >
-                                <input type="hidden" name="fid" value="{{entry['id']}}">
+                                <input type="hidden" name="rid" value="{{entry['id']}}">
                                 <button class="btn btn-info btn-row"><i class="icon-circle-arrow-down"></i></button>
                               </form>
                             </div>
@@ -324,6 +323,24 @@
               <div class="modal-body">
                   <label>评分</label>
                   <input type="text" name="name" v-model="folderName" class="input-xlarge">
+              </div>
+              <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+                <button class="btn btn-danger" data-dismiss="modal" v-on="click: createFolder()">创建</button>
+              </div>
+            </div>
+
+            <div class="modal small hide fade" id="uploadModal" tabindex="3" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h3 id="uploadModalLabel">评分</h3>
+              </div>
+              <div class="modal-body">
+                  <form id="upload" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
+                  <INPUT type="hidden" name="fid", value="{{currentIndex}}"><br/>
+                  <input name="1" type="file" /><br/>
+                  <input type="submit" value="上传" >
+                  </form>
               </div>
               <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>

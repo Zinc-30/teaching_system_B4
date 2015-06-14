@@ -8,13 +8,13 @@ class TeacherAction extends Action {
         cookie('tid',1);
     }
 
-    public function index(){
+    public function indexinfo(){
         $data = array();
         if($_POST['fid']==0){
             $teacher_id = $_COOKIE['tid'];
-            var_dump($teacher_id);
+            //var_dump($teacher_id);
             $classlist = D('Course_class')->where('teacher_id='.$teacher_id)->select();
-            var_dump($classlist);
+            //var_dump($classlist);
             $data = array();
             foreach ($classlist as $key => $value) {
                 $fid = D('Resdir')->where('cid='.$value['id'])->select();
@@ -23,10 +23,10 @@ class TeacherAction extends Action {
                 $data[$key]['name'] = $fid[0]['name'];
                 $data[$key]['is_folder'] = true;
             }
-            var_dump($data);
+            //var_dump($data);
         }else{
             $data = D('Resdir')->dir_get($_POST['fid']);
-            var_dump($data);
+            //var_dump($data);
         }
         $ans = json_encode($data);
         echo $ans;

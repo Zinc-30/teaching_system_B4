@@ -49,7 +49,7 @@ class HomeworkModel extends Model {
 	    }else{// 上传成功
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
-			$in = D('Homework')->where('fid='.$fid && 'name='.$info[0][savename])->select();
+			$in = D('Homework')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
 	    	if (!$in){
 	    		$data = array(
 		    		'name' 			=>	$info[0][savename] ,

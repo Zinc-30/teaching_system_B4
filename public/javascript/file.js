@@ -71,48 +71,13 @@ Vue.component('demo-grid', {
       var index = 0;
       if (urls.length >= 2){
         index = urls[1];
+        ele.currentIndex = index;
       }
       ele.indexPath = [{id: 0, name: 'Home', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}];
       ele.data = [];
       ele.downloads = [100, 1800, 100, 900];
       ele.uploadRecord = '';
-      ele.getChildIndex(index, function(){
-        	var storage = window.localStorage;
-        	var path = storage.getItem('pathKey:'+index);
-        	if (path != null) {
-          	ele.indexPath = JSON.parse(path);
-        	}
-        	ele.userName = 'XIN_HAO';
-          ele.userType = 2;
-          ele.userAdmin = ele.userType == 2;
-          var s = $('#file_upload');
-          $('#file_upload').uploadify({
-            'swf'      : '/teaching_system_B4/public/images/uploadify.swf',
-            'uploader' : '/teaching_system_B4/Share/Lib/Action/B4/uploadify.php',
-            'method':'post',                       
-            'buttonText':'文件上传',
-            'queueID': 'uploadDiv',
-            'onUploadStart': function(file){
-                var element = {};
-                var pathRecord = $('#pathRecord');
-                element.path = pathRecord.val();
-                $('#file_upload').uploadify('settings', 'formData', ele.currentIndex);
-            },
-            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
-                alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
-            },
-            'onUploadSuccess' : function(file, data, response) {
-                $('#' + file.id).find('.data').html(' 上传完毕');
-                // alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
-                var todayDate = new Date();
-                var timeStr = todayDate.toLocaleString();
-                var record = {id: data, name: file.name, author_name: ele.userName, duetime: timeStr, is_folder: false};
-                ele.generatePic(record);
-                ele.data = data;
-            },
-            // new options here
-          });
-      });
+      
       $.ajax({
         url: ele.prefixUrl + '/Index/userinfo',
         type: 'POST',
@@ -124,33 +89,15 @@ Vue.component('demo-grid', {
           ele.userName = res.userName;
           ele.userType = res.userType;
           ele.userAdmin = ele.userType == 2;
-          var s = $('#file_upload');
-          $('#file_upload').uploadify({
-            'swf'      : '/teaching_system_B4/public/images/uploadify.swf',
-            'uploader' : '/teaching_system_B4/Share/Lib/Action/B4/uploadify.php',
-            'method':'post',                       
-            'buttonText':'文件上传',
-            'queueID': 'uploadDiv',
-            'onUploadStart': function(file){
-                var element = {};
-                var pathRecord = $('#pathRecord');
-                element.path = pathRecord.val();
-                $('#file_upload').uploadify('settings', 'formData', ele.currentIndex);
-            },
-            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
-                alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
-            },
-            'onUploadSuccess' : function(file, data, response) {
-                $('#' + file.id).find('.data').html(' 上传完毕');
-                // alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
-                var todayDate = new Date();
-                var timeStr = todayDate.toLocaleString();
-                var record = {id: data, name: file.name, author_name: ele.userName, duetime: timeStr, is_folder: false};
-                ele.generatePic(record);
-                ele.data = data;
-            },
-            // new options here
+
+          ele.getChildIndex(index, function(){
+            var storage = window.localStorage;
+            var path = storage.getItem('pathKey:'+index);
+            if (path != null) {
+              ele.indexPath = JSON.parse(path);
+            }
           });
+         
         },
         error: function(res, status, e) {
           ele.errorDlgIn(res.status+' '+e);
@@ -184,11 +131,11 @@ Vue.component('demo-grid', {
       }
       if(ele.data[ele.deleteIndex].is_folder){
         $.ajax({
-          url: ele.prefixUrl + '/Index/deldir',
+          url: ele.prefixUrl + '/Admin/deldir',
           type: 'POST',
           dataType: 'JSON',
           data: {
-            fid: ele.data[ele.deleteIndex].id,
+            id: ele.data[ele.deleteIndex].id,
           },
           success: function(res) {
             var row = $('#fileRow'+ele.deleteIndex);
@@ -204,11 +151,11 @@ Vue.component('demo-grid', {
       }
       else{
         $.ajax({
-          url: ele.prefixUrl + 'delfile',
+          url: ele.prefixUrl + '/Admin/delfile',
           type: 'POST',
           dataType: 'JSON',
           data: {
-            fid: ele.data[ele.deleteIndex].id,
+            id: ele.data[ele.deleteIndex].id,
           },
           success: function(res) {
             var row = $('#fileRow'+ele.deleteIndex);
@@ -305,6 +252,7 @@ Vue.component('demo-grid', {
         dataType: 'JSON',
         data: {
           // path: $('#pathRecord').val(),
+          fid: ele.currentIndex,
           name: ele.folderName,
           description: ele.folderDescription,
         },
@@ -426,6 +374,12 @@ Vue.component('demo-grid', {
     commentDlgOut: function() {
       $('#commentModal').modal('hide');
     },
+    uploadDlgIn: function() {
+      $('#uploadModal').modal('show');
+    },
+    uploadDlgOut: function() {
+      $('#uploadModal').modal('hide');
+    },
     deleteDlgIn: function() {
       $('#deleteModal').modal('show');
     },
@@ -474,7 +428,7 @@ Vue.component('demo-grid', {
         ],
       };
       $.ajax({
-        url: ele.prefixUrl + '/Index/indexinfo',
+        url: ele.userType==0?ele.prefixUrl + '/Index/indexinfo':ele.userType==1?ele.prefixUrl + '/Teacher/indexinfo':ele.prefixUrl + '/Admin/indexinfo',
         type: 'POST',
         dataType: 'JSON',
         data: {

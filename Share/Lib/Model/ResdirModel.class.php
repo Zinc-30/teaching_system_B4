@@ -81,12 +81,12 @@ class ResdirModel extends Model {
 	    		'fid' 			=>	$fid,
 	    		'url'			=>	$newdir,
 	    	 );
-            var_dump($data);
+            //var_dump($data);
     		$id = $d->data($data)->add($data);
     		return $id;
     	}
     	else {
-    		echo "已存在";
+    		echo "失败";
     	}
     }
     
@@ -109,10 +109,10 @@ class ResdirModel extends Model {
     public function dir_delete($fid){
     	$d0 = D('Resdir');
     	$fdir = $d0->where("id=".$fid)->select();
-    	var_dump($fdir);
+    	//var_dump($fdir);
     	$dir = $fdir[0]['url'];
 	  	$deldir = iconv("UTF-8", "GB2312", $dir); //code transe
-        var_dump($deldir);
+        //var_dump($deldir);
     	$ok = $this->dir_del($deldir);
     	if ($ok){
     		$dellist = array();
@@ -121,7 +121,7 @@ class ResdirModel extends Model {
     		$l = 0;
     		while ($l<$r){
     			$value = $dellist[$l];
-    			var_dump($value);
+    			//var_dump($value);
     			$fdir = $d0->where("fid=".$value)->field('id')->select();
     			foreach ($fdir as $key => $val) {
     				$dellist[] = (int)$val['id'];
@@ -130,7 +130,7 @@ class ResdirModel extends Model {
     			$l = $l+1;
     			$d0->where("id=".$value)->delete();
                 D('Resource')->where("fid=".$value)->delete();
-    			var_dump($dellist);
+    			//var_dump($dellist);
     		}
     	}
     }
@@ -153,14 +153,14 @@ class ResdirModel extends Model {
                 $data[$key]['is_folder'] = true;
             }
             $k = count($data1);
-            var_dump($k);
+            //var_dump($k);
             $data2 = D('Resource')->where("fid=".$fid)->select();
             foreach ($data2 as $key => $value) {
                 $data[$key+$k]['id'] = $value['id'];
                 $data[$key+$k]['name'] = $value['name'];
                 $data[$key+$k]['is_folder'] = false;
             }
-            var_dump($data);
+            //var_dump($data);
         }
     	return $data;
     }
