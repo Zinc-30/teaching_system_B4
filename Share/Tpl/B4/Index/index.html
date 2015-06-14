@@ -334,13 +334,15 @@ www.win<!DOCTYPE html>
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                   <h3 id="uploadModalLabel">评分</h3>
               </div>
+
               <div class="modal-body">
                   <form id="upload" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
-                  <INPUT type="hidden" name="fid", value="{{currentIndex}}"><br/>
+                  <input type="hidden" name="fid", value="{{currentIndex}}"><br/>
                   <input name="1" type="file" /><br/>
                   <input type="submit" value="上传" >
                   </form>
               </div>
+
               <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
                 <button class="btn btn-danger" data-dismiss="modal" v-on="click: createFolder()">创建</button>

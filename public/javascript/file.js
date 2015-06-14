@@ -13,7 +13,7 @@ Vue.component('demo-grid', {
       downloads: [],
       name: { name: '文件名', author: '上传者', duetime: '时间'},
       indexPath: [{id: 0, name: 'root', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}],
-      curentIndex: 0,
+      currentIndex: 0,
       // 删除
       deleteIndex: -1,
       deleteFileName: '',
@@ -335,7 +335,7 @@ Vue.component('demo-grid', {
         return;
       }
       $.ajax({
-        url: '/file/search',
+        url: '/Index/search',
         type: 'POST',
         dataType: 'JSON',
         data: {

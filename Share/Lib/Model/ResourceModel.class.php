@@ -60,7 +60,7 @@ class ResourceModel extends Model {
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
 	    	$in = D('Resource')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
-	    	if (count($in)==0){
+	    	if (!$in){
 	    		if ($info[0]['type'] == 'text/plain'){// txt文件内容读取
 	    			$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
 	    			$context = file_get_contents($fname);
@@ -72,6 +72,7 @@ class ResourceModel extends Model {
 		    		'context'		=>	$context,
 		    		'hits'			=>	0
 		    	 );
+		    	//var_dump($data);
 		    	$resource = D('Resource');
 		    	$rid = $resource->data($data)->add($data);
 		        //$this->success('上传成功！');

@@ -48,10 +48,12 @@ class IndexAction extends Action {
     public function uploadfile(){
 
         $fid = (int)$_POST['fid'];
+        var_dump($fid);
         $rid = D('Resource')->file_upload($fid);
-        $data = D('Resdir')->dir_get($fid);
-        $ans = json_encode($data);
-        echo $ans;
+
+        // $data = D('Resdir')->dir_get($fid);
+        // $ans = json_encode($data);
+        // echo $ans;
         $this->success();
     }
 
@@ -87,7 +89,7 @@ class IndexAction extends Action {
     
     //全文搜索 (index定期更新，json)
     public function search(){
-    	$query = "include";
+    	$query = $_POST['query'];
     	require("sphinxapi.php");
 		$cl = new SphinxClient ();
 		$cl->SetServer ( '127.0.0.1', 9312);
