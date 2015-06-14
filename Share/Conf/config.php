@@ -10,7 +10,7 @@ return array (
 'DB_NAME'       => 'teaching_system',
 'DB_USER'       => 'root',
 'DB_PWD'        => '',
-'DB_PREFIX'     => 'teaching_',
+'DB_PREFIX'     => '',
 'DB_CHARSET'    => 'utf8',
 'DISPATCH_ON'   => true,
 'DEBUG_MODE'    => true,

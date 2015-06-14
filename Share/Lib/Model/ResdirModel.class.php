@@ -18,14 +18,6 @@
 
 class ResdirModel extends Model {
 		
-	// 定义自动验证
-    protected $_validate    =   array(
-        array('name','require','标题必须'),
-        );
-    // 定义自动完成
-    protected $_auto    =   array(
-        array('addtime','time',1,'function'),
-        );
 
     //本地增加目录，输入目录名，输出是否成功
     protected function dir_add($dir){
@@ -53,68 +45,42 @@ class ResdirModel extends Model {
 		    return false;
 		}
   	}
-	//第一组
-	//为课程增加根目录，输入课程名，输出目录id
-    public function coursedir_add($cname){
-    	$dir = "./Upload/".$cname;
-    	$ok = $this->dir_add($dir);
-    	if ($ok) {
-    		$d = D('Resdir');
-    		$data = array(
-	    		'name' 			=>	$cname ,
-	    		'fid' 			=>	0,
-	    		'url'			=>	$dir
-	    	 );
-    		$id = $d->data($data)->add($data);
-    		return $id;
-    	}
-    	else {
-    		echo "已存在";
-    	}
-    }
-    //第二组
-    //为班级增加根目录，输入课程，教师名称，课程id，输出目录id
-    public function classdir_add($fid,$tname,$cid){
-		$d0 = D('Resdir');
-		$fdir = $d0->where("id=".$fid)->select();	
-    	$fid = $fdir[0]['id'];
-    	$fpath = $fdir[0]['url'];
-    	$newdir = $fpath.'/'.$tname;
-    	var_dump($newdir);
-    	$ok = $this->dir_add($newdir);
-    	if ($ok) {
-    		$d = D('Resdir');
-    		$data = array(
-	    		'name' 			=>	$tname,
-	    		'fid' 			=>	$fid,
-	    		'cid'			=>	$cid,
-	    		'url'			=>	$newdir
-	    	 );
-    		var_dump($data);
-    		$id = $d->data($data)->add($data);
-    		return $id;
-    	}
-    	else {
-    		echo "已存在";
-    	}
+	
+    //第一组
+    //为班级增加根目录，输入课程id，输出目录id
+    public function classdir_add($cid){
+		$dir = "./Upload/".$cid;
+        $ok = $this->dir_add($dir);
+        if ($ok) {
+            $courseid = D('Course_class')->where('id='.$cid)->select();
+            $cname = D('Course')->where('id=1'.$courseid[0]['course_id'])->select(); 
+            $d = D('Resdir');
+            $data = array(
+                'name'          =>  $cname[0]['name'] ,
+                'fid'           =>  0,
+                'url'           =>  $dir,
+                'cid'           =>  $cid
+             );
+            $id = $d->data($data)->add($data);
+            return $id;
+        }
+        else {
+            echo "已存在";
+        }
     }
     //在一个目录中增加目录，输入当前目录id，新的目录名[,描述]，输出目录id
-    public function resdir_add($fid,$dname,$descrip="",$uploader=""){
+    public function resdir_add($fid,$dname){
 		$d = D('Resdir');
 		$fdir = $d->where("id=".$fid)->select();
     	$fpath = $fdir[0]['url'];
-    	$cid = $fdir[0]['cid'];
     	$newdir = $fpath.'/'.$dname;
     	$ok = $this->dir_add($newdir);
     	if ($ok) {
     		$data = array(
 	    		'name' 			=>	$dname,
 	    		'fid' 			=>	$fid,
-	    		'cid'			=>	$cid,
 	    		'url'			=>	$newdir,
-	    		'descrip'		=>	$descrip
 	    	 );
-            if ($uploader) $data['uploader'] = $uploader;
             var_dump($data);
     		$id = $d->data($data)->add($data);
     		return $id;
@@ -124,13 +90,14 @@ class ResdirModel extends Model {
     	}
     }
     
-    public function homework_add($fid,$dname,$descrip,$ddl){
-        $ok = $this->resdir_add($fid,$dname,$descrip);
+    public function homework_add($fid,$dname,$descrip="",$ddl=""){
+        $ok = $this->resdir_add($fid,$dname);
         var_dump($ok);
         if ($ok){
             $data = array(
                 'ddl'       =>  $ddl,
-                'homework'  =>  true
+                'homework'  =>  1,
+                'descrip'   =>  $descrip
              );
             $d = D('Resdir')->where('id='.$ok)->save($data);
             return $ok;
@@ -162,14 +129,39 @@ class ResdirModel extends Model {
     			}
     			$l = $l+1;
     			$d0->where("id=".$value)->delete();
+                D('Resource')->where("fid=".$value)->delete();
     			var_dump($dellist);
     		}
     	}
     }
     //显示目录，输入id，输出相关信息
     public function dir_get($fid){
-    	$data = $this->where("fid=".$fid)->field('id,name,uploader,addtime')->select();
-    	var_dump($data);
+        $data = array();
+        $hw = D('Resdir')->where("id=".$fid)->select();
+        if ($hw[0]['homework']==1){
+            $data1 = D('Homework')->where("fid=".$fid)->select();
+            foreach ($data1 as $key => $value) {
+                $data[$key]['id'] = $value['id'];
+                $data[$key]['name'] = $value['name'];
+                $data[$key]['is_folder'] = false;
+            }
+        }else{
+            $data1 = D('Resdir')->where("fid=".$fid)->select();
+            foreach ($data1 as $key => $value) {
+                $data[$key]['id'] = $value['id'];
+                $data[$key]['name'] = $value['name'];
+                $data[$key]['is_folder'] = true;
+            }
+            $k = count($data1);
+            var_dump($k);
+            $data2 = D('Resource')->where("fid=".$fid)->select();
+            foreach ($data2 as $key => $value) {
+                $data[$key+$k]['id'] = $value['id'];
+                $data[$key+$k]['name'] = $value['name'];
+                $data[$key+$k]['is_folder'] = false;
+            }
+            var_dump($data);
+        }
     	return $data;
     }
 }

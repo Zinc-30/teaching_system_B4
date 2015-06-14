@@ -32,30 +32,27 @@ class ResourceModel extends Model {
 	}
 
 	public function file_del($id) {
-		if (!$this->id) {
-			return 0;
-		}
 		$ans = D('Resource')->where('id='.$id)->field('fid,name')->select();
 		$fid = $ans[0]['fid'];
 		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
-		$path = $dir[0]['url'].'/'; //code transe$dir[0].;
+		$path = $dir[0]['url'].'/';
 		$oldname = iconv("UTF-8", "GB2312", $path.$ans[0]['name']);
 		$ok = unlink($oldname);
+		$ans = D('Resource')->where('id='.$id)->delete();
 		return $ok;
 	}
 
 	public function file_upload($fid){
 		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
 		$path = $dir[0][url].'/'; //code transe$dir[0].;
-    	var_dump($path);
     	import('ORG.Net.UploadFile');
 	    $upload = new UploadFile();// 实例化上传类
 	    $upload->maxSize  = 3145728 ;// 设置附件上传大小
-	    $upload->allowExts  = array('docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
-	    $upload->savePath =  $path;// 设置附件上传目录
+	    $upload->allowExts  = array('pdf','docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+	    $upload->savePath = $path;// 设置附件上传目录
 	    $upload->saveRule = '';
+	    var_dump($path);
 	    if(!$upload->upload()) {// 上传错误提示错误信息
-	        var_dump($upload->getErrorMsg());
 	    }else{// 上传成功
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
@@ -66,12 +63,10 @@ class ResourceModel extends Model {
 	    	}
 	    	$data = array(
 	    		'name' 			=>	$info[0][savename] ,
-	    		'category' 		=>	$fid,
+	    		'fid' 		=>	$fid,
 	    		'context'		=>	$context,
 	    		'hits'			=>	0
 	    	 );
-	    	dump($info);
-	    	dump($data);
 	    	$resource = D('Resource');
 	    	$rid = $resource->data($data)->add($data);
 	        //$this->success('上传成功！');
@@ -84,13 +79,11 @@ class ResourceModel extends Model {
     	$info = $resource->where('id='.$rid)->field('fid,name')->select();
 		$dir = D('Resdir')->where('id='.$info[0]['fid'])->field('url')->select();
     	$file_url = $dir[0]['url']."/".$info[0]['name'];
-
 		if(!isset($file_url)||trim($file_url)==''){
+			echo "url empty";
 			return '500';
 		}
-		if(!file_exists($file_url)){ //检查文件是否存在
-			return '404';
-		}
+		
 		$info = $resource->where('id='.$rid)->setInc('hits');
 		$file_name=basename($file_url);
 		$file_type=explode('.',$file_url);

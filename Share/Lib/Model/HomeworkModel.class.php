@@ -72,9 +72,6 @@ class HomeworkModel extends Model {
 		if(!isset($file_url)||trim($file_url)==''){
 			return '500';
 		}
-		if(!file_exists($file_url)){ //检查文件是否存在
-			return '404';
-		}
 		$file_name=basename($file_url);
 		$file_type=explode('.',$file_url);
 		$file_type=$file_type[count($file_type)-1];
