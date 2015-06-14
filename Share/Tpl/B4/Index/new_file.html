@@ -1,67 +1,12 @@
 <html>
-	<br/>
-	新建课程目录[ok]：
-		<form id="addcourse" method='post' action="{:U('addclass')}">
-		classid：<INPUT type="number" name="cid"><br/>
-		<input type="submit" value="提交" >
-		</form>
-		<br/>
-	新建目录[ok]：
-		<form id="adddir" method='post' action="{:U('newdir')}">
-		当前fid：<INPUT type="number" name="fid"><br/>
-		名字：<INPUT type="text" name="name"><br/>
-		<input type="submit" value="提交" >
-		</form>
-		<br/>
-	新建作业：
-		<form id="adddir" method='post' action="{:U('Teacher/newhomework')}">
-		当前fid：<INPUT type="number" name="fid"><br/>
-		名字：<INPUT type="text" name="name"><br/>
-		<input type="submit" value="提交" >
-		</form>
-		<br/>
-	上传文件[ok]
-		<form id="upload" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
-		当前fid：<INPUT type="number" name="fid"><br/>
-		<input name="1" type="file" /><br/>
-		<input type="submit" value="提交" >
-		</form>
-		<br/>
-	提交作业：
-		<form id="addclass" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
-		课名：<INPUT type="text" name="name"><br/>
-		<input type="submit" value="提交" >
-		</form>
-	<br>
-	下载文件[ok]
-		<form id="down" method='post' action="{:U('downloadfile')}">
-		资源rid：<INPUT type="number" name="rid"><br/>
-		<input type="submit" value="提交" >
-		</form>
-		<br>
-	删除文件[ok]
-		<form id="down" method='post' action="{:U('B4/Admin/delfile')}">
-		资源id：<INPUT type="number" name="id"><br/>
-		<input type="submit" value="提交" >
-		</form>
-	删除目录,作业[ok]
-		<form id="down" method='post' action="{:U('B4/Admin/deldir')}">
-		目录id：<INPUT type="number" name="id"><br/>
-		<input type="submit" value="提交" >
-		</form>
-	学生展示[ok]
-		<form id="down" method='post' action="{:U('B4/Index/index')}">
-		目录id：<INPUT type="number" name="fid"><br/>
-		<input type="submit" value="提交" >
-		</form>
-	教师展示[ok]
-		<form id="down" method='post' action="{:U('B4/Teacher/index')}">
-		目录id：<INPUT type="number" name="fid"><br/>
-		<input type="submit" value="提交" >
-		</form>
-	admin展示[ok]
-		<form id="down" method='post' action="{:U('B4/Admin/index')}">
-		目录id：<INPUT type="number" name="fid"><br/>
-		<input type="submit" value="提交" >
-		</form>
+	<form id="upload" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
+	<input name="1" type="file" />
+	<input type="submit" value="提交" >
+	</form>
+
+	<form id="adddor" method='post' action="{:U('addresdir')}">
+	标题：<INPUT type="text" name="name"><br/>
+	内容：<TEXTAREA name="description" rows="5" cols="45"></TEXTAREA><br/>
+	<input type="submit" value="提交" >
+	</form>
 </html>

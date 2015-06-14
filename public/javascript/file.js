@@ -4,19 +4,40 @@ Vue.component('demo-grid', {
   data: function () {
     return {
       columnHead: ['name', 'author', 'duetime'],
-      columns: [ 'name', 'author', 'duetime'],
+      columns: [ 'name', 'author_name', 'duetime'],
       sortKey: '',
       filterKey: '',
       searchQuery: '',
       reversed: {},
-      data: {},
-      name: { name: '文件名', author: '上传者', duetime: '上传时间'},
+      data: [],
+      downloads: [],
+      name: { name: '文件名', author: '上传者', duetime: '时间'},
       indexPath: [{id: 0, name: 'root', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}],
       curentIndex: 0,
+      // 删除
       deleteIndex: -1,
       deleteFileName: '',
       deleteList: [],
       editList: [],
+      // 评分
+      commentIndex: -1,
+      commentFileName: '',
+      // 新建目录信息
+      folderName: '',
+      folderDescription: '',
+      // ajax错误信息
+      lastError: '',
+      // 用户信息
+      userName: '',
+      // 0 学生 1 老师 2 admin
+      userType: 0,
+      userAdmin: false,
+      // url前缀
+      prefixUrl: '/teaching_system_B4/index.php',
+      // 上传记录
+      uploadNameRecord: '1',
+      uploadIdRecord: '2',
+      uploadFlag: 0,
     }
   },
   created: function() {
@@ -29,30 +50,110 @@ Vue.component('demo-grid', {
       self.reversed.$add(key, false)
     })
   },
+  watch: {
+    'uploadFlag': function(val, oldval){
+      console.log(val+oldval);
+      if (val == 0){
+        return;
+      }
+      this.uploadFlag = 0;
+      var todayDate = new Date();
+      var timeStr = todayDate.toLocaleString();
+      var record = {id: this.uploadIdRecord, name: this.uploadNameRecord, author_name: this.userName, duetime: timeStr, is_folder: false};
+      this.generatePic(record);
+      this.data.unshift(record);
+    } 
+  },
   methods: {
     init: function () {
+      var ele = this;
       var urls = window.location.hash.split('/');
       var index = 0;
       if (urls.length >= 2){
         index = urls[1];
       }
-      this.indexPath = [{id: 0, name: 'Home', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}];
-      this.data = this.getChildIndex(index);
-      for (var i = 0; i < this.data.length; i++) {
-        this.generatePic(this.data[i]);
-      }
+      ele.indexPath = [{id: 0, name: 'Home', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}];
+      ele.data = [];
+      ele.downloads = [100, 1800, 100, 900];
+      ele.uploadRecord = '';
+      ele.getChildIndex(index, function(){
+        	var storage = window.localStorage;
+        	var path = storage.getItem('pathKey:'+index);
+        	if (path != null) {
+          	ele.indexPath = JSON.parse(path);
+        	}
+        	ele.userName = res.userName;
+          ele.userType = res.userType;
+          ele.userAdmin = ele.userType == 2;
+          var s = $('#file_upload');
+          $('#file_upload').uploadify({
+            'swf'      : '/teaching_system_B4/public/images/uploadify.swf',
+            'uploader' : '/teaching_system_B4/Share/Lib/Action/B4/uploadify.php',
+            'method':'post',                       
+            'buttonText':'文件上传',
+            'queueID': 'uploadDiv',
+            'onUploadStart': function(file){
+                var element = {};
+                var pathRecord = $('#pathRecord');
+                element.path = pathRecord.val();
+                $('#file_upload').uploadify('settings', 'formData', ele.currentIndex);
+            },
+            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+                alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+            },
+            'onUploadSuccess' : function(file, data, response) {
+                $('#' + file.id).find('.data').html(' 上传完毕');
+                // alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
+                var todayDate = new Date();
+                var timeStr = todayDate.toLocaleString();
+                var record = {id: data, name: file.name, author_name: ele.userName, duetime: timeStr, is_folder: false};
+                ele.generatePic(record);
+                ele.data = data;
+            },
+            // new options here
+          });
+      });
       $.ajax({
-        url: '/teaching_system_B4/index.php/Index/test',
+        url: ele.prefixUrl + '/Index/userinfo',
         type: 'POST',
         dataType: 'JSON',
-        data: {
-          id: 1000,
+        data:{
+
         },
-        success: function(res){
-          alert(res);
+        success: function(res) {
+          ele.userName = res.userName;
+          ele.userType = res.userType;
+          ele.userAdmin = ele.userType == 2;
+          var s = $('#file_upload');
+          $('#file_upload').uploadify({
+            'swf'      : '/teaching_system_B4/public/images/uploadify.swf',
+            'uploader' : '/teaching_system_B4/Share/Lib/Action/B4/uploadify.php',
+            'method':'post',                       
+            'buttonText':'文件上传',
+            'queueID': 'uploadDiv',
+            'onUploadStart': function(file){
+                var element = {};
+                var pathRecord = $('#pathRecord');
+                element.path = pathRecord.val();
+                $('#file_upload').uploadify('settings', 'formData', ele.currentIndex);
+            },
+            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+                alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+            },
+            'onUploadSuccess' : function(file, data, response) {
+                $('#' + file.id).find('.data').html(' 上传完毕');
+                // alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
+                var todayDate = new Date();
+                var timeStr = todayDate.toLocaleString();
+                var record = {id: data, name: file.name, author_name: ele.userName, duetime: timeStr, is_folder: false};
+                ele.generatePic(record);
+                ele.data = data;
+            },
+            // new options here
+          });
         },
-        error: function(res, status, e){
-          alert(status + e);
+        error: function(res, status, e) {
+          ele.errorDlgIn(res.status+' '+e);
         }
       });
     },
@@ -63,8 +164,17 @@ Vue.component('demo-grid', {
     },
 
     deleteAt: function (index) {
-      this.deleteIndex = index;
-      this.deleteFileName = this.data[index].name;
+      var ele = this;
+      ele.deleteIndex = index;
+      ele.deleteFileName = ele.data[index].name;
+      ele.deleteDlgIn();
+    },
+
+    commentAt: function (index) {
+      var ele = this;
+      ele.commentIndex = index;
+      ele.commentFileName = ele.data[index].name;
+      ele.commentDlgIn();
     },
 
     deleteFile: function () {
@@ -72,31 +182,94 @@ Vue.component('demo-grid', {
       if(this.deleteIndex < 0){
         return;
       }
-      var row = $('#fileRow'+this.deleteIndex);
-      row.fadeOut(500, function() {
-        ele.deleteList.push(ele.data[ele.deleteIndex]);
-        ele.data.$remove(ele.deleteIndex);
-      });
-      
+      if(ele.data[ele.deleteIndex].is_folder){
+        $.ajax({
+          url: ele.prefixUrl + '/Index/deldir',
+          type: 'POST',
+          dataType: 'JSON',
+          data: {
+            fid: ele.data[ele.deleteIndex].id,
+          },
+          success: function(res) {
+            var row = $('#fileRow'+ele.deleteIndex);
+            row.fadeOut(500, function() {
+            ele.deleteList.push(ele.data[ele.deleteIndex]);
+              ele.data.$remove(ele.deleteIndex);
+            });
+          },
+          error: function(res, status, e) {
+            ele.errorDlgIn(res.status+' '+e);
+          }
+        });
+      }
+      else{
+        $.ajax({
+          url: ele.prefixUrl + 'delfile',
+          type: 'POST',
+          dataType: 'JSON',
+          data: {
+            fid: ele.data[ele.deleteIndex].id,
+          },
+          success: function(res) {
+            var row = $('#fileRow'+ele.deleteIndex);
+            row.fadeOut(500, function() {
+            ele.deleteList.push(ele.data[ele.deleteIndex]);
+              ele.data.$remove(ele.deleteIndex);
+            });
+          },
+          error: function(res, status, e) {
+            ele.errorDlgIn(res.status+' '+e);
+          }
+        });
+
+      }
     },
+    commentHomeWork: function() {
+      var ele = this;
+      if(this.commentIndex < 0){
+        return;
+      }
+      $.ajax({
+        url: '/file/comment',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          fid: ele.data[ele.commentIndex].id,
+        },
+        success: function(res) {
+          
+        },
+        error: function(data, status, e) {
+          ele.errorDlgIn(res.status+' '+e);
+        }
+      })
+    },
+
     changeDir: function(id) {
       var ele = this;
       var record;
-      
       var pathIndex = -1;
+      ele.currentIndex = id;
+      // search result
+      if (id == -1) {
+        return;
+      }
       for (var i = 0; i < ele.indexPath.length; i++){
         if (ele.indexPath[i].id == id){
           pathIndex = i;
+          break;
         }
       }
-     
+      var listIndex = -1;
       for (var i = 0; i < ele.data.length; i++) {
         if(ele.data[i].id == id) {
           record = ele.data[i];
+          listIndex = i;
           break;
         }
       }
       if (record && !record.is_folder){
+        // ele.downloadfile(listIndex);
         return;
       }
       if(pathIndex < 0){
@@ -105,13 +278,71 @@ Vue.component('demo-grid', {
       else{
         ele.indexPath = ele.indexPath.slice(0, pathIndex+1);
       }
-
-      ele.data = ele.getChildIndex(id);
-      for (var i = 0; i < ele.data.length; i++) {
-        ele.generatePic(ele.data[i]);
+      var pathStr = '/Home';
+      for (var i = 1; i < ele.indexPath.length; ++i){
+        pathStr += '/' + ele.indexPath[i].name;
       }
-
+      document.getElementById('pathRecord').value = pathStr;
+      ele.searchQuery = '';
+      ele.getChildIndex(id, function(){
+      });
+      window.location.replace(ele.prefixUrl + '/Index/index#/'+id);
+      // 存储路径信息
+      var storage = window.localStorage;
+      storage.setItem('pathKey:'+id, JSON.stringify(ele.indexPath));
     },
+
+    // c 
+    // f
+    createFolder: function() {
+      var ele = this;
+      if (ele.currentIndex < 0){
+        return;
+      }
+      $.ajax({
+        url: ele.prefixUrl + '/Index/newdir',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          // path: $('#pathRecord').val(),
+          name: ele.folderName,
+          description: ele.folderDescription,
+        },
+        success: function(res){
+          var todayDate = new Date();
+          var timeStr = todayDate.toLocaleString();
+          ele.data = res;
+          for (var i = 0; i < res.length; i++){
+          	ele.generatePic(ele.data[i]);
+          }
+        },
+        error: function(res, status, e){
+          ele.errorDlgIn(res.status+' '+e);
+        },
+      })
+    },
+
+    downloadfile: function(index) {
+      var ele = this;
+      if (ele.data[index].is_folder) {
+        return;
+      }
+      $.ajax({
+        url: ele.prefixUrl + '/Index/download',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          fid: ele.data[index].id,
+        },
+        success: function(res){
+          window.urlopen(res);
+        },
+        error: function(res, status, e){
+          ele.errorDlgIn(res.status+' '+e);
+        },
+      });
+    },
+
     generatePic: function(info) {
       var picMap = {
         'pdf': 'pdf.png',
@@ -147,186 +378,71 @@ Vue.component('demo-grid', {
         }
       }
     },
-    getChildIndex: function(pid){
-      var tree = {
-        // 0 is the virtual folder that the current user can access
-        // the first one should be always be the "My Files"
-        // "My Files" is total same as other index
-        0: [
-          {id: 500, name: '我的文件', author_id: 1000, author_name:'one', duetime: '2015-05-28', is_folder:true},
-          {id: 1000, name: '计算机', author_id: 9000, author_name:'two', duetime: '2015-05-27', is_folder:true},
-          {id: 1001, name: '场波分析', author_id: 7000, author_name:'three', duetime: '2015-05-26', is_folder:true},
-          {id: 1002, name: '大学物理', author_id: 8000, author_name:'four', duetime: '2015-05-25', is_folder:true},  
-        ],
-        1000: [
-          {id: 2000, name: '计算机1.pdf', author_id: 1000, author_name:'one', duetime: '2015-05-28', is_folder:false},
-          {id: 2001, name: '计算机2.doc', author_id: 9000, author_name:'two', duetime: '2015-05-27', is_folder:false},
-          {id: 2002, name: '计算机3.docx', author_id: 7000, author_name:'three', duetime: '2015-05-26', is_folder:false},
-          {id: 2003, name: '计算机4.txt', author_id: 8000, author_name:'four', duetime: '2015-05-25', is_folder:false},
-        ],
-        1001: [
-          {id: 2004, name: '场波分析1.py', author_id: 1000, author_name:'one', duetime: '2015-05-28', is_folder:false},
-          {id: 2005, name: '场波分析2.html', author_id: 9000, author_name:'two', duetime: '2015-05-27', is_folder:false},
-          {id: 2006, name: '场波分析3.ppt', author_id: 7000, author_name:'three', duetime: '2015-05-26', is_folder:false},
-          {id: 2007, name: '场波分析4.rb', author_id: 8000, author_name:'four', duetime: '2015-05-25', is_folder:false},
-        ],
-        1002: [
-          {id: 2008, name: '大学物理1.m', author_id: 1000, author_name:'one', duetime: '2015-05-28', is_folder:false},
-          {id: 2009, name: '大学物理2.js', author_id: 9000, author_name:'two', duetime: '2015-05-27', is_folder:false},
-          {id: 2010, name: '大学物理3.php', author_id: 7000, author_name:'three', duetime: '2015-05-26', is_folder:false},
-          {id: 2011, name: '大学物理4', author_id: 8000, author_name:'four', duetime: '2015-05-25', is_folder:false},
-        ],
-      };
-      var res = tree[pid];
-      if(res){
-        return res;
-      }
-      else{
-        return [];
-      }
-    }
-  }
-})
 
-Vue.component('work-grid', {
-  template: '#work-template',
-  replace: true,
-  data: function () {
-    return {
-      columnHead: ['name', 'lesson', 'dir', 'duetime'],
-      columns: [ 'name', 'lesson', 'dir', 'duetime'],
-      sortKey: '',
-      filterKey: '',
-      searchQuery: '',
-      reversed: {},
-      data: {},
-      name: { name: '文件名', lesson: '课程', dir: '目录', duetime: '截止时间'},
-      indexPath: [{id: 0, name: 'root', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}],
-      curentIndex: 0,
-      deleteIndex: -1,
-      deleteFileName: '',
-      deleteList: [],
-      editList: [],
-    }
-  },
-  created: function() {
-    this.init();
-  },
-  compiled: function () {
-    // initialize reverse state
-    var self = this;
-    this.columns.forEach(function (key) {
-      self.reversed.$add(key, false)
-    })
-  },
-  methods: {
-    init: function () {
-      var urls = window.location.hash.split('/');
-      var index = 0;
-      if (urls.length >= 2){
-        index = urls[1];
-      }
-      this.indexPath = [{id: 0, name: 'Home', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}];
-      this.data = this.getChildIndex(index);
-      for (var i = 0; i < this.data.length; i++) {
-        this.generatePic(this.data[i]);
-      }
-    },
-
-    sortBy: function (key) {
-      this.sortKey = key
-      this.reversed[key] = !this.reversed[key]
-    },
-
-    deleteAt: function (index) {
-      this.deleteIndex = index;
-      this.deleteFileName = this.data[index].name;
-    },
-
-    deleteFile: function () {
+    search: function(){
       var ele = this;
-      if(this.deleteIndex < 0){
+      var query = ele.searchQuery;
+      if (query == '') {
+        ele.errorDlgIn('请输入关键字');
         return;
       }
-      var row = $('#fileRow'+this.deleteIndex);
-      row.fadeOut(500, function() {
-        ele.deleteList.push(ele.data[ele.deleteIndex]);
-        ele.data.$remove(ele.deleteIndex);
+      $.ajax({
+        url: '/file/search',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          query: query,
+        },
+        success: function(res) {
+          if (ele.indexPath[ele.indexPath.length-1].id == -1){
+            ele.indexPath.pop();
+          }
+          ele.indexPath.push({id: -1, name: '搜索'+query});
+          ele.searchQuery = '';
+          ele.currentIndex = -1;
+        },
+        error: function(res, status, e) {
+          if (ele.indexPath[ele.indexPath.length-1].id == -1){
+            ele.indexPath.pop();
+          }
+          ele.indexPath.push({id: -1, name: '搜索 '+query});
+          ele.errorDlgIn(res.status+' '+e);
+        },
       });
-      
     },
-    changeDir: function(id) {
+    createDlgIn: function() {
       var ele = this;
-      var record;
-      if (id == 0 && ele.indexPath.length == 1) {
-          window.location = '/file'
-      }
-      
-      var pathIndex = -1;
-      for (var i = 0; i < ele.indexPath.length; i++){
-        if (ele.indexPath[i].id == id){
-          pathIndex = i;
-        }
-      }
-     
-      for (var i = 0; i < ele.data.length; i++) {
-        if(ele.data[i].id == id) {
-          record = ele.data[i];
-          break;
-        }
-      }
-      if (record && !record.is_folder){
+      if (ele.currentIndex < 0){
         return;
       }
-      if(pathIndex < 0){
-        ele.indexPath.push(record);
-      }
-      else{
-        ele.indexPath = ele.indexPath.slice(0, pathIndex+1);
-      }
-
-      ele.data = ele.getChildIndex(id);
-      for (var i = 0; i < ele.data.length; i++) {
-        ele.generatePic(ele.data[i]);
-      }
-
+      $('#createModal').modal('show');
     },
-    generatePic: function(info) {
-      var picMap = {
-        'pdf': 'pdf.png',
-        'ppt': 'ppt.png',
-        'pptx': 'ppt.png',
-        'doc': 'word.png',
-        'docx': 'word.png',
-        'c': 'c.png',
-        'h': 'h.png',
-        'cpp': 'cpp.png',
-        'cs': 'csharp.png',
-        'py': 'python.png',
-        'rb': 'ruby.png',
-        'm': 'matlab.jpg',
-        'txt': 'txt.png',
-        'html': 'html.png',
-        'js': 'js.png',
-        'php': 'php.png',
-      };
-      if (info.is_folder){
-        info.picUrl = '../images/folder.png';
-      }
-      else{
-        var nl = info.name.split('.');
-        if (nl.length < 2){
-          info.picUrl = '../images/undefined.png';
-        }
-        else if (picMap[nl[1].toLowerCase()] != undefined){
-          info.picUrl = '../images/' + picMap[nl[1].toLowerCase()];
-        }
-        else{
-          info.picUrl = '../images/undefined.png';
-        }
-      }
+    createDlgOut: function() {
+      $('#createModal').modal('hide');
     },
-    getChildIndex: function(pid){
+    commentDlgIn: function() {
+      $('#commentModal').modal('show');
+    },
+    commentDlgOut: function() {
+      $('#commentModal').modal('hide');
+    },
+    deleteDlgIn: function() {
+      $('#deleteModal').modal('show');
+    },
+    deleteDlgOut: function() {
+      $('#deleteModal').modal('hide');
+    },
+    errorDlgIn: function(e) {
+      var ele = this;
+      ele.lastError = e;
+      $('#errorModal').modal('show', function() {
+      });
+    },
+    errorDlgOut: function() {
+      $('#errorModal').modal('hide');
+    },
+    getChildIndex: function(pid, callback){
+      var ele = this;
       var tree = {
         // 0 is the virtual folder that the current user can access
         // the first one should be always be the "My Files"
@@ -337,6 +453,7 @@ Vue.component('work-grid', {
           {id: 1001, name: '场波分析', author_id: 7000, author_name:'three', duetime: '2015-05-26', is_folder:true},
           {id: 1002, name: '大学物理', author_id: 8000, author_name:'four', duetime: '2015-05-25', is_folder:true},  
         ],
+        500: [],
         1000: [
           {id: 2000, name: '计算机1.pdf', author_id: 1000, author_name:'one', duetime: '2015-05-28', is_folder:false},
           {id: 2001, name: '计算机2.doc', author_id: 9000, author_name:'two', duetime: '2015-05-27', is_folder:false},
@@ -356,16 +473,47 @@ Vue.component('work-grid', {
           {id: 2011, name: '大学物理4', author_id: 8000, author_name:'four', duetime: '2015-05-25', is_folder:false},
         ],
       };
-      var res = tree[pid];
-      if(res){
-        return res;
-      }
-      else{
-        return [];
-      }
+      $.ajax({
+        url: ele.prefixUrl + '/Index/indexinfo',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          fid: pid, 
+        },
+        success: function(res) {
+          if(res){
+            ele.data = res;
+          }
+          else{
+            ele.data = [];
+          }
+          for (var i = 0; i < ele.data.length; i++) {
+            ele.generatePic(ele.data[i]);
+          }
+          callback();
+        },
+        error: function(res, status, e) {
+          var result = tree[pid];
+          if(result){
+            ele.data = result;
+            ele.downloads = [100, 1800, 100, 900];
+          }
+          else{
+            ele.data = [];
+            ele.downloads = [100, 1800, 100, 900];
+          }
+          for (var i = 0; i < ele.data.length; i++) {
+            ele.generatePic(ele.data[i]);
+          }
+          callback();
+          ele.errorDlgIn(res.status+' '+e);
+        },
+      });   
     }
   }
 })
+
+
 
 Vue.component('index-list', {
   template: '#index-template',

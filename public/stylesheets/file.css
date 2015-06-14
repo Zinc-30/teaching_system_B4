@@ -11,13 +11,13 @@ th.active .arrow {
   opacity: 0.66;
 }
 
-.arrow.asc {
+.arrow .asc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 4px solid #fff;
 }
 
-.arrow.dsc {
+.arrow .dsc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 4px solid #fff;
@@ -35,9 +35,42 @@ th.active .arrow {
 
 .fileRow {
   margin-top: 7px;
-  margin-bottom: 7px;
+}
+
+.btn-row {
+  margin-top: 4px;
 }
 
 .opIcon {
   margin-right: 10px;
+}
+
+#search-query {
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  margin-top: 12px; 
+  margin-bottom: 10px; 
+  padding-left: 6px;
+  height: 23px;
+}
+
+.btn-create {
+  border: 2px solid #49afcd;
+  border-radius: 30px;
+  width: 90px;
+}
+
+.btn-search {
+  border: 2px solid #49afcd;
+  margin-top: 12px; 
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  margin-bottom: 10px;
+}
+
+#uploadDiv {
+    background-color: #FFF;
+    border-radius: 3px;
+    height: 50px;
+    overflow: none;
 }
