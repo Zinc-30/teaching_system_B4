@@ -10,6 +10,10 @@ class IndexAction extends Action {
     }
 
     public function index(){
+        $this->display();
+    }
+
+    public function indexinfo(){
         if($_POST['fid']==0){
             $sid = $_COOKIE['sid'];
             var_dump($sid);
