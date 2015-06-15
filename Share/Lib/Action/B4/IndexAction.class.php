@@ -16,7 +16,7 @@ class IndexAction extends Action {
     public function userinfo(){
         $data = array(
                 'userName' =>"xin" ,
-                'userType' =>2
+                'userType' =>1
             );
         $ans = json_encode($data);
         echo $ans;
@@ -39,6 +39,36 @@ class IndexAction extends Action {
             //var_dump($data);
         }else{
             $data = D('Resdir')->dir_get($_POST['fid']);
+            //var_dump($data);
+        }
+        $ans = json_encode($data);
+        echo $ans;
+    }
+
+    public function homeworkinfo(){
+        if($_POST['fid']==0){
+            $sid = $_COOKIE['sid'];
+            //var_dump($sid);
+            $classlist = D('Student_course')->where('student_id='.$sid)->select();
+            //var_dump($classlist);
+            $data = array();
+            foreach ($classlist as $key => $value) {
+                $fid = D('Resdir')->where('cid='.$value['course_class_id'])->select();
+                //var_dump($fid);
+                $data[$key]['id'] = $fid[0]['id'];
+                $data[$key]['name'] = $fid[0]['name'];
+                $data[$key]['is_folder'] = true;
+            }
+            //var_dump($data);
+        }else{
+            $info = D('Resdir')->where("id=".$_POST['fid'])->select();
+            foreach ($info as $key => $value) {
+                    if ($value['homework']==1){
+                        $data[$key]['id'] = $info[0]['id'];
+                        $data[$key]['name'] = $info[0]['name'];
+                        $data[$key]['is_folder'] = false;       
+                    }            # code...
+                }      
             //var_dump($data);
         }
         $ans = json_encode($data);

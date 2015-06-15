@@ -18,6 +18,27 @@ class AdminAction extends Action {
         //$this->display();
     }
 
+    public function homeworkinfo(){
+        $data = array();
+        if($_POST['fid']==0){
+            $data = D('Resdir')->dir_get($_POST['fid']);
+            //var_dump($data);
+        }else{
+            $info = D('Resdir')->where("id=".$_POST['fid'])->select();
+            foreach ($info as $key => $value) {
+                    if ($value['homework']==1){
+                        $data[$key]['id'] = $info[0]['id'];
+                        $data[$key]['name'] = $info[0]['name'];
+                        $data[$key]['is_folder'] = false;       
+                }            # code...
+            }      
+            //var_dump($data);
+        }
+        $ans = json_encode($data);
+        echo $ans;
+        //$this->display();
+    }
+
     public function deldir(){
         $dir = D('Resdir');
         $ok = $dir->dir_delete($_POST['id']);

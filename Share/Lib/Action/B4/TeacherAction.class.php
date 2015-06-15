@@ -18,15 +18,47 @@ class TeacherAction extends Action {
             $data = array();
             foreach ($classlist as $key => $value) {
                 $fid = D('Resdir')->where('cid='.$value['id'])->select();
-                var_dump($fid);
-                $data[$key]['id'] = $fid[0]['id'];
-                $data[$key]['name'] = $fid[0]['name'];
-                $data[$key]['is_folder'] = true;
+                if ($fid) {
+                    $data[$key]['id'] = $fid[0]['id'];
+                    $data[$key]['name'] = $fid[0]['name'];
+                    $data[$key]['is_folder'] = true;    
+                }
             }
             //var_dump($data);
         }else{
-            $data = D('Resdir')->dir_get($_POST['fid']);
+            $data = D('Resdir')->dir_get($_POST['fid']);          
+        }
+        $ans = json_encode($data);
+        echo $ans;
+        //$this->display();
+    }
+
+    public function homeworkinfo(){
+        $data = array();
+        if($_POST['fid']==0){
+            $teacher_id = $_COOKIE['tid'];
+            //var_dump($teacher_id);
+            $classlist = D('Course_class')->where('teacher_id='.$teacher_id)->select();
+            //var_dump($classlist);
+            $data = array();
+            foreach ($classlist as $key => $value) {
+                $fid = D('Resdir')->where('cid='.$value['id'])->select();
+                if ($fid) {
+                    $data[$key]['id'] = $fid[0]['id'];
+                    $data[$key]['name'] = $fid[0]['name'];
+                    $data[$key]['is_folder'] = true;    
+                }
+            }
             //var_dump($data);
+        }else{
+            $info = D('Resdir')->where("id=".$_POST['fid'])->select();
+            foreach ($info as $key => $value) {
+                    if ($value['homework']==1){
+                        $data[$key]['id'] = $info[0]['id'];
+                        $data[$key]['name'] = $info[0]['name'];
+                        $data[$key]['is_folder'] = false;       
+                    }            # code...
+                }            
         }
         $ans = json_encode($data);
         echo $ans;
