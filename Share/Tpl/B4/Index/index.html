@@ -1,4 +1,4 @@
-www.win<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -197,9 +197,10 @@ www.win<!DOCTYPE html>
         </div>
         <div class="span8">
             <div class="input-append">
-                <input type="text" placeholder="search" id="search-query" style="" v-model="searchQuery">
-                <button type="button" class="btn btn-info btn-search" v-on="click: search()">
-                    <i class="icon-search"></i> Search
+                <input type="text" placeholder="search" id="search-query" v-model="searchQuery">
+                <button type="button" class="btn btn-info btn-search" style="border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;" v-on="click: search()">
+                    <i class="icon-search"></i> 搜索
                 </button>
             </div>
 
@@ -227,28 +228,21 @@ www.win<!DOCTYPE html>
               <tbody>
                 <tr id="{{ 'fileRow' + $index }}" v-repeat="entry: data | filterBy searchQuery | orderBy sortKey reversed[sortKey]">
                     <td class="hidden-phone" style="width: 30px; height: 30px">
-                            <img v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
+                            <img class="img-circle" v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
                     </td>
                     <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])" style="width: 180px">    
 
                         <p class="fileRow" v-if="key != 'author'">{{ entry[key] }}</p>
                     </td>
-                    <td style="width:50px">
-                      
-                          <div class="row-fluid" style="height: 30px">
-                            <div class="span4" v-if="! entry['is_folder']">
-                              <form action="/teaching_system_B4/index.php/Index/downloadfile" method="POST" target="formsubmit" >
-                                <input type="hidden" name="rid" value="{{entry['id']}}">
-                                <button class="btn btn-info btn-row"><i class="icon-circle-arrow-down"></i></button>
-                              </form>
-                            </div>
-                            <div class="span4"  v-if="userType == 2">
-                              <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: deleteAt($index)"><i class="icon-remove"></i></button>
-                            </div>
-                            <div class="span4" v-if="userType > 0 && !entry['is_folder']">
-                              <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: commentAt($index)" ><i class="icon-pencil"></i></button>
-                            </div>
-                          </div>
+                    <td >
+                        <form class="btn"action="/teaching_system_B4/index.php/Index/downloadfile" method="POST" target="formsubmit" style="display: none">
+                              <input type="hidden" name="rid" value="{{entry['id']}}">
+                        </form>
+                        <div class="btn-group">
+                          <button class="btn btn-info btn-row" v-on="click: downloadfile($index)"><i class="icon-circle-arrow-down"></i></button>
+                          <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: deleteAt($index)"><i class="icon-remove"></i></button>
+                          <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: commentAt($index)" ><i class="icon-pencil"></i></button>
+                        </div>
                     </td>
 
                     <td class="hidden-phone" style="padding-left: 50px">

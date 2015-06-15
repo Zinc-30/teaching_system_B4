@@ -275,20 +275,16 @@ Vue.component('demo-grid', {
       if (ele.data[index].is_folder) {
         return;
       }
-      $.ajax({
-        url: ele.prefixUrl + '/Index/download',
-        type: 'POST',
-        dataType: 'JSON',
-        data: {
-          fid: ele.data[index].id,
-        },
-        success: function(res){
-          window.urlopen(res);
-        },
-        error: function(res, status, e){
-          ele.errorDlgIn(res.status+' '+e);
-        },
-      });
+      var f = document.createElement("form");
+      document.body.appendChild(f);
+      var i = document.createElement("input");
+      i.type = "hidden";
+      f.appendChild(i);
+      i.value = ele.data[index].id;
+      i.name = "rid";
+      f.action = ele.prefixUrl + '/Index/downloadfile';
+      f.method = 'POST';
+      f.submit();
     },
 
     generatePic: function(info) {
