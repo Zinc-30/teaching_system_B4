@@ -82,8 +82,8 @@ Vue.component('demo-grid', {
         	if (path != null) {
           	ele.indexPath = JSON.parse(path);
         	}
-        	ele.userName = res.userName;
-          ele.userType = res.userType;
+        	ele.userName = 'XIN_HAO';
+          ele.userType = 2;
           ele.userAdmin = ele.userType == 2;
           var s = $('#file_upload');
           $('#file_upload').uploadify({
