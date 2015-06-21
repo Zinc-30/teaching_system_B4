@@ -104,32 +104,24 @@ Vue.component('work-grid', {
               forceParse: 0,
               showMeridian: 1
           });
-          $('#file_upload').uploadify({
-            'swf'      : '/teaching_system_B4/public/images/uploadify.swf',
-            'uploader' : '/teaching_system_B4/Share/Lib/Action/B4/work_uploadify.php',
-            'method':'post',                       
-            'buttonText':'文件上传',
-            'queueID': 'uploadDiv',
-            'onUploadStart': function(file){
-                var element = {};
-                var pathRecord = $('#pathRecord');
-                element.path = pathRecord.val();
-                $('#file_upload').uploadify('settings', 'formData', ele.currentIndex);
+          var fileUpload = $('#fileupload');
+          fileUpload.fileupload({
+            url: ele.prefixUrl + '/Index/uploadfile',
+            dataType: 'json',
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    $('<p/>').text(file.name).appendTo('#files');
+                });
             },
-            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
-                alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
-            },
-            'onUploadSuccess' : function(file, data, response) {
-                $('#' + file.id).find('.data').html(' 上传完毕');
-                // alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
-                var todayDate = new Date();
-                var timeStr = todayDate.toLocaleString();
-                var record = {id: data, name: file.name, author_name: ele.userName, duetime: timeStr, is_folder: false};
-                ele.generatePic(record);
-                ele.data.unshift(record);
-            },
-            // new options here
-          });
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            }
+          }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled'); 
         },
         error: function(res, status, e) {
           ele.errorDlgIn(res.status+' '+e);
@@ -161,7 +153,7 @@ Vue.component('work-grid', {
       if(this.deleteIndex < 0){
         return;
       }
-      if(ele.data[ele.deleteIndex].is_folder){
+      if(ele.data[ele.deleteIndex].is_folder) {
         $.ajax({
           url: ele.prefixUrl + '/Index/deldir',
           type: 'POST',
@@ -273,24 +265,29 @@ Vue.component('work-grid', {
 
     // c 
     // f
-    createFolder: function() {
+     createFolder: function() {
       var ele = this;
       if (ele.currentIndex < 0){
         return;
       }
+      var dueTime = $('#dtp_input1').val();
       $.ajax({
         url: ele.prefixUrl + '/Index/newdir',
         type: 'POST',
         dataType: 'JSON',
         data: {
           // path: $('#pathRecord').val(),
+          fid: ele.currentIndex,
           name: ele.folderName,
-          description: ele.folderDescription,
-          duetime: ele.dueTime,
+          duetime: dueTime,
         },
         success: function(res){
-          ele.data.unshift({id: res.id, name: ele.folderName, author_name:ele.userName, duetime: timeStr, is_folder:true});
-          ele.generatePic(ele.data[0]);
+          var todayDate = new Date();
+          var timeStr = todayDate.toLocaleString();
+          ele.data = res;
+          for (var i = 0; i < res.length; i++){
+            ele.generatePic(ele.data[i]);
+          }
         },
         error: function(res, status, e){
           ele.errorDlgIn(res.status+' '+e);
@@ -303,20 +300,16 @@ Vue.component('work-grid', {
       if (ele.data[index].is_folder) {
         return;
       }
-      $.ajax({
-        url: ele.prefixUrl + '/Index/download',
-        type: 'POST',
-        dataType: 'JSON',
-        data: {
-          fid: ele.data[index].id,
-        },
-        success: function(res){
-          window.urlopen(res);
-        },
-        error: function(res, status, e){
-          ele.errorDlgIn(res.status+' '+e);
-        },
-      });
+      var f = document.createElement("form");
+      document.body.appendChild(f);
+      var i = document.createElement("input");
+      i.type = "hidden";
+      f.appendChild(i);
+      i.value = ele.data[index].id;
+      i.name = "rid";
+      f.action = ele.prefixUrl + '/Index/downloadfile';
+      f.method = 'POST';
+      f.submit();
     },
 
     generatePic: function(info) {

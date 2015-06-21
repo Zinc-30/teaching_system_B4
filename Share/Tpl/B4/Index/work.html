@@ -12,13 +12,12 @@
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/stylesheets/bootstrap-modal.css">
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/stylesheets/file.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/stylesheets/jquery.fileupload.css">
     <link rel="stylesheet" href="__PUBLIC__/lib/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet"  href="__PUBLIC__/stylesheets/uploadify.css">
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/stylesheets/bootstrap-datetimepicker.min.css" media="screen">
 
     <script src="__PUBLIC__/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="__PUBLIC__/javascript/vue.js" type="text/javascript"></script>
-    <script type="text/javascript" src="__PUBLIC__/javascript/jquery.uploadify.min.js"></script>
 
     <script type="text/javascript" src="__PUBLIC__/lib/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="__PUBLIC__/javascript/bootstrap-modal.js"></script>
@@ -196,7 +195,16 @@
             </div>
 
             <div class="span2">
-                <a class="btn btn-info btn-create" href="#" role="button" data-toggle="modal" v-on="click: uploadDlgIn()">上传作业</a>
+                <form id="upload" method='post' style="display: none" action="{:U('uploadfile')}" enctype="multipart/form-data" >
+                  <input type="text" name="fid", value="{{currentIndex}}"><br/>
+                  <input name="1" id="hiddenFile" v-attr="value: fileChoose" type="file" /><br/>
+                </form>
+                <span class="btn btn-info btn-create fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>上传作业</span>
+                    <!-- The file input field used as target for the file upload widget -->
+                    <input id="fileupload" type="file" name="files[]" multiple>
+                </span>
             </div>
             <div class="span8">
             <div class="input-append">
@@ -318,7 +326,7 @@
               </div>
               <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-                <button class="btn btn-danger" data-dismiss="modal" v-on="click: createFolder()">创建</button>
+                <button class="btn btn-danger" data-dismiss="modal" v-on="click: commentHomework()">确认</button>
               </div>
             </div>
 
@@ -339,30 +347,6 @@
             </div>
 
         </div>
-        <div class="pagination">
-          <ul>
-            <li>
-              <a href="#">Prev</a>
-            </li>
-            <li>
-              <a href="#">1</a>
-            </li>
-            <li>
-              <a href="#">2</a>
-            </li>
-            <li>
-              <a href="#">3</a>
-            </li>
-            <li>
-              <a href="#">4</a>
-            </li>
-            <li>
-              <a href="#">Next</a>
-            </li>
-          </ul>
-        </div>
-
-        
 
         <footer>
           <p>
@@ -375,10 +359,16 @@
     </div>
     </script>
     <work-grid v-with="filterKey: searchQuery"></work-grid>
-    <input id="pathRecord" type="hidden" value="/Home/"/>
+    <input id="pathRecord" type="hidden" value="/Home/" >
     <iframe name="formsubmit" style="display:none;">
     </iframe>
-    <script src="../../public/javascript/work.js" type="text/javascript"></script>
+        <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="__PUBLIC__/javascript/vendor/jquery.ui.widget.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="__PUBLIC__/javascript/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="__PUBLIC__/javascript/jquery.fileupload.js"></script>
+    <script src="__PUBLIC__/javascript/work.js" type="text/javascript"></script>
     <script type="text/javascript">
         $("[rel=tooltip]").tooltip();
         $(function() {

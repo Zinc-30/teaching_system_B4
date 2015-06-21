@@ -38,6 +38,7 @@ Vue.component('demo-grid', {
       uploadNameRecord: '1',
       uploadIdRecord: '2',
       uploadFlag: 0,
+      fileChoose: '',
     }
   },
   created: function() {
@@ -77,6 +78,7 @@ Vue.component('demo-grid', {
       ele.data = [];
       ele.downloads = [100, 1800, 100, 900];
       ele.uploadRecord = '';
+
       
       $.ajax({
         url: ele.prefixUrl + '/Index/userinfo',
@@ -97,7 +99,24 @@ Vue.component('demo-grid', {
               ele.indexPath = JSON.parse(path);
             }
           });
-         
+          var fileUpload = $('#fileupload');
+          fileUpload.fileupload({
+            url: ele.prefixUrl + '/Index/uploadfile',
+            dataType: 'json',
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    $('<p/>').text(file.name).appendTo('#files');
+                });
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            }
+          }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
         },
         error: function(res, status, e) {
           ele.errorDlgIn(res.status+' '+e);
@@ -371,7 +390,8 @@ Vue.component('demo-grid', {
       $('#commentModal').modal('hide');
     },
     uploadDlgIn: function() {
-      $('#uploadModal').modal('show');
+      // $('#uploadModal').modal('show');
+      $('#hiddenFile').click();
     },
     uploadDlgOut: function() {
       $('#uploadModal').modal('hide');
