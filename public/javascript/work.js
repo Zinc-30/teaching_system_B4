@@ -38,6 +38,7 @@ Vue.component('work-grid', {
       uploadNameRecord: '1',
       uploadIdRecord: '2',
       uploadFlag: 0,
+      uploadIndex: -1,
     }
   },
   created: function() {
@@ -108,10 +109,14 @@ Vue.component('work-grid', {
           fileUpload.fileupload({
             url: ele.prefixUrl + '/Index/uploadfile',
             dataType: 'json',
+            formData:{
+              'fid': ele.currentIndex,
+            },
             done: function (e, data) {
                 $.each(data.result.files, function (index, file) {
                     $('<p/>').text(file.name).appendTo('#files');
                 });
+                ele.uploadIndex = -1;
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -146,6 +151,12 @@ Vue.component('work-grid', {
       ele.commentIndex = index;
       ele.commentFileName = ele.data[index].name;
       ele.commentDlgIn();
+    },
+
+    uploadAt: function (index) {
+        var ele = this;
+        ele.uploadIndex = ele.data[index].id;
+        ele.uploadDlgIn();
     },
 
     deleteFile: function () {
@@ -401,6 +412,12 @@ Vue.component('work-grid', {
     deleteDlgOut: function() {
       $('#deleteModal').modal('hide');
     },
+    uploadDlgIn: function() {
+      $('#uploadModal').modal('show');
+    },
+    uploadDlgOut: function() {
+      $('#uploadModal').modal('hide');
+    },
     errorDlgIn: function(e) {
       var ele = this;
       ele.lastError = e;
@@ -451,7 +468,7 @@ Vue.component('work-grid', {
         },
         success: function(res) {
           if(res){
-            ele.data = res;
+            ele.data = tree[pid];
           }
           else{
             ele.data = [];

@@ -246,7 +246,7 @@
                         <form class="btn"action="/teaching_system_B4/index.php/Index/downloadfile" method="POST" target="formsubmit" style="display: none">
                               <input type="hidden" name="rid" value="{{entry['id']}}">
                         </form>
-                        <div class="btn-group">
+                        <div class="btn-group" v-if="userAdmin">
                           <button class="btn btn-info btn-row" v-on="click: downloadfile($index)"><i class="icon-circle-arrow-down"></i></button>
                           <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: deleteAt($index)"><i class="icon-remove"></i></button>
                           <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: commentAt($index)" ><i class="icon-pencil"></i></button>
@@ -273,8 +273,8 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                <button class="btn btn-danger" data-dismiss="modal" v-on="click: deleteFile()">Delete</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+                <button class="btn btn-danger" data-dismiss="modal" v-on="click: deleteFile()">删除</button>
               </div>
             </div>
 

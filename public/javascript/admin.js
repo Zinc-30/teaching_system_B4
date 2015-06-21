@@ -78,7 +78,7 @@ Vue.component('demo-grid', {
         data:{
 
         },
-        error: function(res, status, e) {
+        success: function(status) {
           // ele.userName = res.userName;
           // ele.userType = res.userType;
           ele.userName = 'XIN';
@@ -112,7 +112,7 @@ Vue.component('demo-grid', {
           }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
         },
-        success: function(res) {
+        error: function(res, status, e) {
           ele.errorDlgIn(res.status+' '+e);
         }
       });
@@ -246,7 +246,7 @@ Vue.component('demo-grid', {
       ele.searchQuery = '';
       ele.getChildIndex(id, function(){
       });
-      window.location.replace(ele.prefixUrl + '/Index/index#/'+id);
+      window.location.replace(ele.prefixUrl + '/Index/admin#/'+id);
       // 存储路径信息
       var storage = window.localStorage;
       storage.setItem('pathKey:'+id, JSON.stringify(ele.indexPath));
@@ -397,7 +397,7 @@ Vue.component('demo-grid', {
                 var deleteIndex = tableData.indexOf(dragRow);
                 tableData.$remove(deleteIndex);
                 ele.data = tableData;        
-            }
+            },
             error: function(res, status, e) {
                 ele.errorDlgIn(res.status+' '+e);
             }
@@ -491,16 +491,16 @@ Vue.component('demo-grid', {
           fid: pid, 
         },
         success: function(res) {
-          if(res){
-            ele.data = res;
-          }
-          else{
-            ele.data = [];
-          }
-          for (var i = 0; i < ele.data.length; i++) {
-            ele.generatePic(ele.data[i]);
-          }
-          callback();
+            if(res){
+                ele.data = res;
+            }
+            else{
+                ele.data = [];
+            }
+            for (var i = 0; i < ele.data.length; i++) {
+                ele.generatePic(ele.data[i]);
+            }
+            callback();
         },
         error: function(res, status, e) {
           var result = tree[pid];

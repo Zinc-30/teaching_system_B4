@@ -102,7 +102,11 @@ Vue.component('demo-grid', {
           var fileUpload = $('#fileupload');
           fileUpload.fileupload({
             url: ele.prefixUrl + '/Index/uploadfile',
-            dataType: 'json',
+            // url: 'http://127.0.0.1:5000/Index/uploadfile',
+            formData:{
+              'fid': ele.currentIndex,
+            },
+            dataType: 'JSON',
             done: function (e, data) {
                 $.each(data.result.files, function (index, file) {
                     $('<p/>').text(file.name).appendTo('#files');
