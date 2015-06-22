@@ -199,7 +199,7 @@
                     <i class="glyphicon glyphicon-plus"></i>
                     <span>上传作业</span>
                     <!-- The file input field used as target for the file upload widget -->
-                    <input id="fileupload" type="file" name="files[]" multiple>
+                    <input id="fileupload" type="file" name="files" multiple>
                 </span>
             </div>
             <div class="span2" v-if="userType > 0">
@@ -328,7 +328,7 @@
                  
                   <form id="uploadForm" enctype="multipart/form-data">
                   <input  name="fid" type="hidden" value="{{uploadIndex}}"><br/>
-                  <input name="1" type="file" /><br/><br/>
+                  <input name="files" type="file" /><br/><br/>
                   <input class="btn btn-info" style="width: 30px" value="上传" v-on="click: uploadForm">
                   <input class="btn" style="width: 30px" value="取消" v-on="click: uploadDlgOut">
                   </form>
