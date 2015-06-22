@@ -73,18 +73,13 @@ Vue.component('work-grid', {
       var index = 0;
       if (urls.length >= 2){
         index = urls[1];
+        ele.currentIndex = index;
       }
       ele.indexPath = [{id: 0, name: 'Home', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}];
       ele.data = [];
       ele.downloads = [100, 1800, 100, 900];
       ele.uploadRecord = '';
-      ele.getChildIndex(index, function(){
-        var storage = window.localStorage;
-        var path = storage.getItem('pathKey:'+index);
-        if (path != null) {
-          ele.indexPath = JSON.parse(path);
-        }
-      });
+      
       $.ajax({
         url: ele.prefixUrl + '/Index/userinfo',
         type: 'POST',
@@ -96,6 +91,13 @@ Vue.component('work-grid', {
           ele.userName = res.userName;
           ele.userType = res.userType;
           ele.userAdmin = ele.userType == 2;
+          ele.getChildIndex(index, function(){
+            var storage = window.localStorage;
+            var path = storage.getItem('pathKey:'+index);
+            if (path != null) {
+              ele.indexPath = JSON.parse(path);
+            }
+          });
           $('.form_datetime').datetimepicker({
               language:  'zh-CN',
               weekStart: 1,
@@ -108,10 +110,11 @@ Vue.component('work-grid', {
           });
           var fileUpload = $('#fileupload');
           fileUpload.fileupload({
-            url: ele.prefixUrl + '/Index/uploadfile',
+            url: ele.prefixUrl + '/Index/handinfile',
             dataType: 'json',
             formData:{
               'fid': ele.currentIndex,
+              'sid': 1
             },
             done: function (e, data) {
                 $.each(data.result.files, function (index, file) {
@@ -308,7 +311,7 @@ Vue.component('work-grid', {
       }
       var dueTime = $('#dtp_input1').val();
       $.ajax({
-        url: ele.prefixUrl + '/Index/newdir',
+        url: ele.prefixUrl + '/Teacher/newhomework',
         type: 'POST',
         dataType: 'JSON',
         data: {
@@ -343,7 +346,7 @@ Vue.component('work-grid', {
       f.appendChild(i);
       i.value = ele.data[index].id;
       i.name = "rid";
-      f.action = ele.prefixUrl + '/Index/downloadfile';
+      f.action = ele.prefixUrl + '/Teacher/downloadfile';
       f.method = 'POST';
       f.submit();
     },
@@ -485,7 +488,7 @@ Vue.component('work-grid', {
         ],
       };
       $.ajax({
-        url: ele.prefixUrl + '/Index/indexinfo',
+        url: ele.userType==0? ele.prefixUrl + '/Index/homeworkinfo':ele.prefixUrl + '/Teacher/homeworkinfo',
         type: 'POST',
         dataType: 'JSON',
         data: {
@@ -493,7 +496,7 @@ Vue.component('work-grid', {
         },
         success: function(res) {
           if(res){
-            ele.data = tree[pid];
+            ele.data = res;
           }
           else{
             ele.data = [];

@@ -53,15 +53,30 @@ class TeacherAction extends Action {
             }
             //var_dump($data);
         }else{
-            $info = D('Resdir')->where("id=".$_POST['fid'])->select();
+            $info = D('Resdir')->where("fid=".$_POST['fid'])->select();
+            //var_dump($info);
+            $kk=0;
             foreach ($info as $key => $value) {
                     if ($value['homework']==1){
-                        $data[$key]['id'] = $info[0]['id'];
-                        $data[$key]['name'] = $info[0]['name'];
-                        $data[$key]['is_folder'] = false;       
+                        $data[$kk]['id'] = $value['id'];
+                        $data[$kk]['name'] = $value['name'];
+                        $data[$kk]['is_folder'] = true; 
+                        $data[$kk]['duetime'] = $value['ddl'];   
+                        $data[$kk]['author_name'] = "xin";
+                        $kk=$kk+1;    
                     }            # code...
-                }            
+                }  
+            $info = D('Homework')->where("fid=".$_POST['fid'])->select();
+            foreach ($info as $key => $value) {
+                        $data[$kk]['id'] = $value['id'];
+                        $data[$kk]['name'] = $value['name'];
+                        $data[$kk]['is_folder'] = false; 
+                        $data[$kk]['duetime'] = $value['addtime'];   
+                        $data[$kk]['author_name'] = "xin";
+                        $kk=$kk+1;     # code...
+                }          
         }
+        //var_dump($data);
         $ans = json_encode($data);
         echo $ans;
         //$this->display();
@@ -75,10 +90,17 @@ class TeacherAction extends Action {
         //通过POST传数据
         $fid = (int)$_POST['fid'];
         $name = $_POST['name'];
-        $descrip = $_POST['descrip'];
-        $ddl = $_POST['ddl'];
+        //$descrip = $_POST['descrip'];
+        $ddl = $_POST['duetime'];
+        echo $ddl;
         $id = D('Resdir')->homework_add($fid,$name,$descrip,$ddl);
         echo "1";
+    }
+
+    public function downloadfile(){
+        //通过POST传数据
+        $rid = $_POST['rid'];
+        $ok  = D('Homework')->file_download($rid);
     }
 
     // //下面调用admin模块

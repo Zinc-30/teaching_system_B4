@@ -16,7 +16,7 @@ class IndexAction extends Action {
     public function userinfo(){
         $data = array(
                 'userName' =>"xin" ,
-                'userType' =>0
+                'userType' =>2
             );
         $ans = json_encode($data);
         echo $ans;
@@ -60,17 +60,32 @@ class IndexAction extends Action {
                 $data[$key]['id'] = $fid[0]['id'];
                 $data[$key]['name'] = $fid[0]['name'];
                 $data[$key]['is_folder'] = true;
+                $data[$key]['author_name'] = "admin";
+                $data[$key]['duetime'] = $fid[0]['addtime'];
             }
             //var_dump($data);
         }else{
-            $info = D('Resdir')->where("id=".$_POST['fid'])->select();
+            $info = D('Resdir')->where("fid=".$_POST['fid'])->select();
+            $kk=0;
             foreach ($info as $key => $value) {
                     if ($value['homework']==1){
-                        $data[$key]['id'] = $info[0]['id'];
-                        $data[$key]['name'] = $info[0]['name'];
-                        $data[$key]['is_folder'] = false;       
+                        $data[$kk]['id'] = $value['id'];
+                        $data[$kk]['name'] = $value['name'];
+                        $data[$kk]['is_folder'] = true; 
+                        $data[$kk]['duetime'] = $value['ddl'];   
+                        $data[$kk]['author_name'] = "xin";
+                        $kk=$kk+1;    
                     }            # code...
-                }      
+                }     
+            $info = D('Homework')->where("fid=".$_POST['fid'])->select();
+            foreach ($info as $key => $value) {
+                        $data[$kk]['id'] = $value['id'];
+                        $data[$kk]['name'] = $value['name'];
+                        $data[$kk]['is_folder'] = false; 
+                        $data[$kk]['duetime'] = $value['addtime'];   
+                        $data[$kk]['author_name'] = "xin";
+                        $kk=$kk+1;     # code...
+                }    
             //var_dump($data);
         }
         $ans = json_encode($data);

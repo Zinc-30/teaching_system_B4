@@ -27,7 +27,6 @@ class ResourceModel extends Model {
 		$ok = rename($oldname,$newname);
 		$data = array ();
 		if ($name) $data['name'] = $name;
-		
 		return $this->where('id='.$id)->save($data);
 	}
 
@@ -77,6 +76,7 @@ class ResourceModel extends Model {
 		        //$this->success('上传成功！');
 		        return $rid;
 	    	}
+	    	system("java -Dc=xin -Dauto -jar post.jar ");
 	    }
     }
     //文件下载 (多个文件压缩，文件夹)

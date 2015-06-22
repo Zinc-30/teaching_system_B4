@@ -29,6 +29,7 @@
 		<br/>
 	提交作业：
 		<form id="addclass" method='post' action="{:U('handinfile')}" enctype="multipart/form-data">
+		<input name="1" type="file" /><br/>
 		课名id：<INPUT type="text" name="fid"><br/>
 		学生id：<INPUT type="text" name="sid"><br/>
 		<input type="submit" value="提交" >
@@ -40,6 +41,15 @@
 		<input type="submit" value="提交" >
 		</form>
 		<br>
+
+	下载文件[ok]
+		<form id="down" method='post' action="{:U('Teacher/downloadfile')}">
+		资源rid：<INPUT type="number" name="rid"><br/>
+		<input type="submit" value="提交" >
+		</form>
+		<br>
+
+
 	删除文件[ok]
 		<form id="down" method='post' action="{:U('B4/Admin/delfile')}">
 		资源id：<INPUT type="number" name="id"><br/>

@@ -253,6 +253,7 @@
                           
                               <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: commentAt($index)" v-if="userType > 0 && !entry['is_folder']"><i class="icon-pencil"></i></button>
                               <button class="btn btn-info btn-row" v-if="entry['is_folder']" v-on="click: uploadAt($index)"><i class="icon-circle-arrow-up" ></i></button>
+                              <button class="btn btn-info btn-row" v-on="click: downloadfile($index)"  v-if="!entry['is_folder']"><i class="icon-circle-arrow-down"></i></button>
                           </div>
                     </td>
 

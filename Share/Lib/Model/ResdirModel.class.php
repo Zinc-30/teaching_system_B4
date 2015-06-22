@@ -69,7 +69,7 @@ class ResdirModel extends Model {
         }
     }
     //在一个目录中增加目录，输入当前目录id，新的目录名[,描述]，输出目录id
-    public function resdir_add($fid,$dname){
+    public function resdir_add($fid,$dname,$uname="xin"){
 		$d = D('Resdir');
 		$fdir = $d->where("id=".$fid)->select();
     	$fpath = $fdir[0]['url'];
@@ -80,6 +80,7 @@ class ResdirModel extends Model {
 	    		'name' 			=>	$dname,
 	    		'fid' 			=>	$fid,
 	    		'url'			=>	$newdir,
+                'uploader'      =>  $uname,
 	    	 );
             //var_dump($data);
     		$id = $d->data($data)->add($data);

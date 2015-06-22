@@ -43,14 +43,15 @@ class HomeworkModel extends Model {
 		echo $ddl;
 		if ($now<=$ddl){
 			$path = iconv("UTF-8", "GB2312", $dir[0][url].'/'); //code transe$dir[0].;
-			// var_dump($path);
+			var_dump($path);
 	    	import('ORG.Net.UploadFile');
 		    $upload = new UploadFile();// 实例化上传类
 		    $upload->maxSize  = 3145728 ;// 设置附件上传大小
-		    $upload->allowExts  = array('docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+		    $upload->allowExts  = array('pdf','docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
 		    $upload->savePath = $dir[0][url].'/';//$path;// 设置附件上传目录
 		    $upload->saveRule = '';
 		    if(!$upload->upload()) {// 上传错误提示错误信息
+		        echo "fail";
 		        //$this->error($upload->getErrorMsg());
 		    }else{// 上传成功
 		    	//提取数据
@@ -59,7 +60,7 @@ class HomeworkModel extends Model {
 		    	if (!$in){
 		    		$data = array(
 			    		'name' 			=>	$info[0][savename] ,
-			    		'fid' 		=>	$fid,
+			    		'fid' 			=>	$fid,
 			    		'student_id'	=>	$sid,
 			    	 );
 			    	var_dump($data);

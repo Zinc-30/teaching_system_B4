@@ -49,7 +49,11 @@ class AdminAction extends Action {
         $res = D('Resource');
         //var_dump($_POST);
         $ok = $res->file_del($_POST['id']);
+    }
 
+    public function move(){
+        $dragid = $_POST['dragid'];
+        $targetid = $_POST['targetid'];
     }
   	
 
