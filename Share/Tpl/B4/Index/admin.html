@@ -200,7 +200,7 @@
                 <i class="glyphicon glyphicon-plus"></i>
                 <span>上传文件</span>
                 <!-- The file input field used as target for the file upload widget -->
-                <input id="fileupload" type="file" name="files[]" multiple>
+                <input id="fileupload" type="file" name="files" multiple>
             </span>
         </div>
         <div class="span8">
@@ -253,8 +253,10 @@
                         </div>
                     </td>
 
-                    <td class="hidden-phone" style="padding-left: 50px">
-                        {{ downloads[$index] }}
+                    <td class="hidden-phone" style="padding-left: 50px"  v-if="!data[$index].is_folder">
+                        {{ data[$index].downloads }}
+                    </td>
+                    <td class="hidden-phone" style="padding-left: 50px"  v-if="data[$index].is_folder">
                     </td>
                 </tr>
               </tbody>

@@ -493,7 +493,7 @@ Vue.component('work-grid', {
         },
         success: function(res) {
           if(res){
-            ele.data = tree[pid];
+            ele.data = res;
           }
           else{
             ele.data = [];
