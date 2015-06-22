@@ -17,30 +17,30 @@ class HomeworkModel extends Model {
 	 * @return int 资源库ID
 	 */
 
-	public function file_change($id,$name) {
-		$ans = D('Homework')->where('id='.$id)->field('fid,name')->select();
-		$fid = (int)$ans[0]['fid'];
+	// public function file_change($id,$name) {
+	// 	$ans = D('Homework')->where('id='.$id)->field('fid,name')->select();
+	// 	$fid = (int)$ans[0]['fid'];
 
-		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
-		$path = $dir[0][url].'/'; //code transe$dir[0].;
-		$oldname = iconv("UTF-8", "GB2312", $path.$ans[0]['name']);
-		$newname = iconv("UTF-8", "GB2312", $path.$name);
-		if(!file_exists($oldname)){ //检查文件是否存在
-			return '404';
-		}
-		$ok = rename($oldname,$newname);
-		$data = array ();
-		if ($name) $data['name'] = $name;
-		return $this->where('id='.$id)->save($data);
-	}
+	// 	$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
+	// 	$path = $dir[0][url].'/'; //code transe$dir[0].;
+	// 	$oldname = iconv("UTF-8", "GB2312", $path.$ans[0]['name']);
+	// 	$newname = iconv("UTF-8", "GB2312", $path.$name);
+	// 	if(!file_exists($oldname)){ //检查文件是否存在
+	// 		return '404';
+	// 	}
+	// 	$ok = rename($oldname,$newname);
+	// 	$data = array ();
+	// 	if ($name) $data['name'] = $name;
+	// 	return $this->where('id='.$id)->save($data);
+	// }
 
 	public function file_upload($fid,$sid){
 		$now = date('Y-m-d H:i:s');
 		$dir = D('Resdir')->where('id='.$fid)->select();
 		dump($dir);
-		echo $now;
+		//echo $now;
 		$ddl = $dir[0]['ddl'];
-		echo $ddl;
+		//echo $ddl;
 		if ($now<=$ddl){
 			$path = iconv("UTF-8", "GB2312", $dir[0][url].'/'); //code transe$dir[0].;
 			var_dump($path);
@@ -56,7 +56,7 @@ class HomeworkModel extends Model {
 		    }else{// 上传成功
 		    	//提取数据
 		    	$info = $upload->getUploadFileInfo();
-				$in = D('Homework')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
+				$in = D('Homework')->where('fid='.$fid." AND ".'name="'.$info[0][savename].'"')->select();
 		    	if (!$in){
 		    		$data = array(
 			    		'name' 			=>	$info[0][savename] ,
@@ -72,8 +72,7 @@ class HomeworkModel extends Model {
 		    }	
 		}else{
 			echo "out of time";
-		}
-		
+		}		
     }
     //文件下载 (多个文件压缩，文件夹)
     public function file_download($id){

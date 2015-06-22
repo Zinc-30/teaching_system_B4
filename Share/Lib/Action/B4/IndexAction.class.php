@@ -16,7 +16,7 @@ class IndexAction extends Action {
     public function userinfo(){
         $data = array(
                 'userName' =>"xin" ,
-                'userType' =>2
+                'userType' =>1
             );
         $ans = json_encode($data);
         echo $ans;
@@ -135,25 +135,32 @@ class IndexAction extends Action {
     
     //全文搜索 (index定期更新，json)
     public function search(){
-    	$query = $_POST['query'];
-    	require("sphinxapi.php");
-		$cl = new SphinxClient ();
-		$cl->SetServer ( '127.0.0.1', 9312);
-		$cl->SetConnectTimeout ( 3 );
-		$cl->SetArrayResult ( true );
-		$cl->SetMatchMode ( SPH_MATCH_ANY);
-		$res = $cl->Query ( $query, "res_index" );
-		// print_r($cl);
-		var_dump($res);
+    	//$query = //$_POST['query'];
+        $query =iconv("UTF-8", "GB2312",$_POST['query']);
+        //var_dump($_POST['query']);
+        $s = $query;
+        //var_dump($_POST['query']);
+        $q = 'http://localhost:8983/solr/xin/browse?&q='.$_POST['query'].'&wt=php';
+        //echo $q;
+        $code = file_get_contents($q);
+        //var_dump($code);
+        eval('$result='.$code.';');
+        foreach ($result['response']['docs'] as $key => $value) {
+            $rs = D('Resource')->where('id='.$value['id'])->select();
+            $data[$key]['id'] = $rs[0]['id'];
+            $data[$key]['name'] = $rs[0]['name'];
+            $data[$key]['is_folder'] = false;
+            $data[$key]['author_name'] = $rs[0]['uploader'];
+            $data[$key]['duetime'] = $rs[0]['addtime'];
+        }
+        $ans = json_encode($data);
+        echo $ans;
     }
 
 
     //test add info
     public function test(){
-        $sid = $_POST['id'];
-        $sid = $sid+1000;
-        $ans = json_encode($sid);
-        echo $ans;
+       system("java -Dc=xin -Dauto -jar solr/post.jar g:/lab5_3120000271_辛浩.pdf");
     }
 
     public function addclass(){

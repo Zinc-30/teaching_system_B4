@@ -158,6 +158,14 @@ Vue.component('demo-grid', {
             });
           },
           error: function(res, status, e) {
+            if(res.status == 200){
+              var row = $('#fileRow'+ele.deleteIndex);
+              row.fadeOut(500, function() {
+              ele.deleteList.push(ele.data[ele.deleteIndex]);
+                ele.data.$remove(ele.deleteIndex);
+              });
+              return;
+            }
             ele.errorDlgIn(res.status+' '+e);
           }
         });
@@ -178,6 +186,14 @@ Vue.component('demo-grid', {
             });
           },
           error: function(res, status, e) {
+            if(res.status == 200){
+              var row = $('#fileRow'+ele.deleteIndex);
+              row.fadeOut(500, function() {
+              ele.deleteList.push(ele.data[ele.deleteIndex]);
+                ele.data.$remove(ele.deleteIndex);
+              });
+              return;
+            }
             ele.errorDlgIn(res.status+' '+e);
           }
         });

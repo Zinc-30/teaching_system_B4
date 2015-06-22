@@ -201,7 +201,7 @@
                 <i class="glyphicon glyphicon-plus"></i>
                 <span>上传文件</span>
                 <!-- The file input field used as target for the file upload widget -->
-                <input id="fileupload" type="file" name="files" multiple>
+                <input id="fileupload" type="file" name="files">
             </span>
         </div>
         <div class="span8">
@@ -254,10 +254,8 @@
                         </div>
                     </td>
 
-                    <td class="hidden-phone" style="padding-left: 50px" v-if="!data[$index].is_folder">
+                    <td class="hidden-phone" style="padding-left: 50px" >
                         {{ data[$index].downloads }}
-                    </td>
-                    <td class="hidden-phone" style="padding-left: 50px"  v-if="data[$index].is_folder">
                     </td>
                 </tr>
               </tbody>
@@ -298,8 +296,7 @@
                   <label>新建目录名</label>
                   <input type="text" name="name" v-model="folderName" class="input-xlarge">
                   <br>
-                  <label>描述</label>
-                  <textarea class="input-xlarge" v-model="folderDescription"></textarea>
+                  
                   <label>目录类型</label>
                   <label class="radio">
                       <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>

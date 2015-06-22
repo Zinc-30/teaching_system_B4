@@ -93,7 +93,7 @@ class ResdirModel extends Model {
     
     public function homework_add($fid,$dname,$descrip="",$ddl=""){
         $ok = $this->resdir_add($fid,$dname);
-        var_dump($ok);
+        //var_dump($ok);
         if ($ok){
             $data = array(
                 'ddl'       =>  $ddl,

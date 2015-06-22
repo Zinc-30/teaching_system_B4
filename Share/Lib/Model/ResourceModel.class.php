@@ -38,6 +38,7 @@ class ResourceModel extends Model {
 		$oldname = iconv("UTF-8", "GB2312", $path.$ans[0]['name']);
 		$ok = unlink($oldname);
 		$ans = D('Resource')->where('id='.$id)->delete();
+		$res = system('java -Dc=xin -Ddata=args -jar solr/post.jar "<delete><id>'.$id.'</id></delete>"');
 		return $ok;
 	}
 
@@ -50,33 +51,31 @@ class ResourceModel extends Model {
 	    $upload->allowExts  = array('pptx','ppt','pdf','docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
 	    $upload->savePath = $path;// 设置附件上传目录
 	    $upload->saveRule = '';
-
-	    var_dump($path);
 	    if(!$upload->upload()) {// 上传错误提示错误信息
 	    	echo "fail";
 	    }else{// 上传成功
 	    	//提取数据
 	    	$info = $upload->getUploadFileInfo();
-	    	$in = D('Resource')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
+	    	var_dump($fid);
+	    	var_dump($info[0][savename]);
+	    	$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
+	    	$in = D('Resource')->where('fid='.$fid." AND ".'name="'.$info[0][savename].'"')->select();
+	    	var_dump($in);
 	    	if (!$in){
-	    		if ($info[0]['type'] == 'text/plain'){// txt文件内容读取
-	    			$fname = iconv("UTF-8", "GB2312", $info[0][savepath].$info[0][savename]);
-	    			$context = file_get_contents($fname);
-	    			$context = iconv("GB2312", "UTF-8", $context); 
-		    	}
 		    	$data = array(
 		    		'name' 			=>	$info[0][savename] ,
 		    		'fid' 		=>	$fid,
 		    		'context'		=>	$context,
 		    		'hits'			=>	0
 		    	 );
-		    	//var_dump($data);
 		    	$resource = D('Resource');
 		    	$rid = $resource->data($data)->add($data);
-		        //$this->success('上传成功！');
-		        return $rid;
+	    	}else{
+	    		$rid = $in[0]['id'];
 	    	}
-	    	system("java -Dc=xin -Dauto -jar post.jar ");
+	    	system("java -Dc=xin -Dparams=literal.id=".$rid." -Dauto -jar solr/post.jar ".$fname);
+	    	//echo "ok!";
+	    	return $rid;
 	    }
     }
     //文件下载 (多个文件压缩，文件夹)

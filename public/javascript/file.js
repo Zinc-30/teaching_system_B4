@@ -51,20 +51,6 @@ Vue.component('demo-grid', {
       self.reversed.$add(key, false)
     })
   },
-  watch: {
-    'uploadFlag': function(val, oldval){
-      console.log(val+oldval);
-      if (val == 0){
-        return;
-      }
-      this.uploadFlag = 0;
-      var todayDate = new Date();
-      var timeStr = todayDate.toLocaleString();
-      var record = {id: this.uploadIdRecord, name: this.uploadNameRecord, author_name: this.userName, duetime: timeStr, is_folder: false};
-      this.generatePic(record);
-      this.data.unshift(record);
-    } 
-  },
   methods: {
     init: function () {
       var ele = this;
@@ -108,6 +94,7 @@ Vue.component('demo-grid', {
             },
             dataType: 'JSON',
             done: function (e, data) {
+                ele.data = data;
                 $.each(data.result.files, function (index, file) {
                     $('<p/>').text(file.name).appendTo('#files');
                 });
@@ -168,6 +155,14 @@ Vue.component('demo-grid', {
             });
           },
           error: function(res, status, e) {
+            if(res.status == 200){
+              var row = $('#fileRow'+ele.deleteIndex);
+              row.fadeOut(500, function() {
+              ele.deleteList.push(ele.data[ele.deleteIndex]);
+                ele.data.$remove(ele.deleteIndex);
+              });
+              return;
+            }
             ele.errorDlgIn(res.status+' '+e);
           }
         });
@@ -188,6 +183,14 @@ Vue.component('demo-grid', {
             });
           },
           error: function(res, status, e) {
+            if(res.status == 200){
+              var row = $('#fileRow'+ele.deleteIndex);
+              row.fadeOut(500, function() {
+              ele.deleteList.push(ele.data[ele.deleteIndex]);
+                ele.data.$remove(ele.deleteIndex);
+              });
+              return;
+            }
             ele.errorDlgIn(res.status+' '+e);
           }
         });
@@ -255,11 +258,12 @@ Vue.component('demo-grid', {
       document.getElementById('pathRecord').value = pathStr;
       ele.searchQuery = '';
       ele.getChildIndex(id, function(){
+         window.location.replace(ele.prefixUrl + '/Index/index#/'+id);
+        // 存储路径信息
+        var storage = window.localStorage;
+        storage.setItem('pathKey:'+id, JSON.stringify(ele.indexPath));
       });
-      window.location.replace(ele.prefixUrl + '/Index/index#/'+id);
-      // 存储路径信息
-      var storage = window.localStorage;
-      storage.setItem('pathKey:'+id, JSON.stringify(ele.indexPath));
+     
     },
 
     // c 
@@ -354,7 +358,7 @@ Vue.component('demo-grid', {
         return;
       }
       $.ajax({
-        url: '/Index/search',
+        url:  ele.prefixUrl + '/Index/search',
         type: 'POST',
         dataType: 'JSON',
         data: {
@@ -367,6 +371,10 @@ Vue.component('demo-grid', {
           ele.indexPath.push({id: -1, name: '搜索'+query});
           ele.searchQuery = '';
           ele.currentIndex = -1;
+          ele.data = res;
+          for (var i = 0; i < res.length; i++){
+            ele.generatePic(ele.data[i]);
+          }
         },
         error: function(res, status, e) {
           if (ele.indexPath[ele.indexPath.length-1].id == -1){
@@ -456,7 +464,7 @@ Vue.component('demo-grid', {
         },
         success: function(res) {
           if(res){
-            ele.data = res;
+            ele.data = res.slice();
           }
           else{
             ele.data = [];

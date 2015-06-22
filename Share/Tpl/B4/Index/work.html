@@ -237,7 +237,7 @@
               <tbody>
                 <tr id="{{ 'fileRow' + $index }}" v-repeat="entry: data | filterBy searchQuery | orderBy sortKey reversed[sortKey]">
                     <td class="hidden-phone" style="width: 30px; height: 30px">
-                            <img v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
+                            <img class="img-circle" v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
                     </td>
                     <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])">    
                         <p class="fileRow">
@@ -296,8 +296,7 @@
                   <label>新建目录名</label>
                   <input type="text" name="name" v-model="folderName" class="input-xlarge">
                   <br>
-                  <label>描述</label>
-                  <textarea class="input-xlarge" v-model="folderDescription"></textarea>
+                  
                   <label>截止时间</label>
                   <div class="controls input-append date form_datetime" data-date="2015-06-16T05:25:07Z" data-date-format="dd MM yyyy - HH:ii p" data-link-field="dtp_input1">
                     <input size="16" type="text" value="" readonly>

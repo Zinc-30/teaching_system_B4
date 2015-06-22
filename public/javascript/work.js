@@ -169,11 +169,10 @@ Vue.component('work-grid', {
       var ele = this;
       var formData = new FormData($('#uploadForm')[0]);
       $.ajax({
-          url: ele.prefixUrl + '/Index/uploadfile',
+          url: ele.prefixUrl + '/Index/handinfile',
           type: 'POST',
           data: formData,
           success: function(res) {
-            ele.data = res;
             ele.uploadDlgOut();
           },
           error: function(res, status, e) {
@@ -182,7 +181,6 @@ Vue.component('work-grid', {
           cache: false,
           contentType: false,
           processData: false,
-          async: false
       });
           
     },
@@ -192,13 +190,13 @@ Vue.component('work-grid', {
       if(this.deleteIndex < 0){
         return;
       }
-      if(ele.data[ele.deleteIndex].is_folder) {
+      if(ele.data[ele.deleteIndex].is_folder){
         $.ajax({
-          url: ele.prefixUrl + '/Index/deldir',
+          url: ele.prefixUrl + '/Admin/deldir',
           type: 'POST',
           dataType: 'JSON',
           data: {
-            fid: ele.data[ele.deleteIndex].id,
+            id: ele.data[ele.deleteIndex].id,
           },
           success: function(res) {
             var row = $('#fileRow'+ele.deleteIndex);
@@ -208,17 +206,25 @@ Vue.component('work-grid', {
             });
           },
           error: function(res, status, e) {
+            if(res.status == 200){
+              var row = $('#fileRow'+ele.deleteIndex);
+              row.fadeOut(500, function() {
+              ele.deleteList.push(ele.data[ele.deleteIndex]);
+                ele.data.$remove(ele.deleteIndex);
+              });
+              return;
+            }
             ele.errorDlgIn(res.status+' '+e);
           }
         });
       }
       else{
         $.ajax({
-          url: ele.prefixUrl + 'delfile',
+          url: ele.prefixUrl + '/Admin/delfile',
           type: 'POST',
           dataType: 'JSON',
           data: {
-            fid: ele.data[ele.deleteIndex].id,
+            id: ele.data[ele.deleteIndex].id,
           },
           success: function(res) {
             var row = $('#fileRow'+ele.deleteIndex);
@@ -228,6 +234,14 @@ Vue.component('work-grid', {
             });
           },
           error: function(res, status, e) {
+            if(res.status == 200){
+              var row = $('#fileRow'+ele.deleteIndex);
+              row.fadeOut(500, function() {
+              ele.deleteList.push(ele.data[ele.deleteIndex]);
+                ele.data.$remove(ele.deleteIndex);
+              });
+              return;
+            }
             ele.errorDlgIn(res.status+' '+e);
           }
         });

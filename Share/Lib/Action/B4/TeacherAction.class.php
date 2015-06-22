@@ -92,9 +92,13 @@ class TeacherAction extends Action {
         $name = $_POST['name'];
         //$descrip = $_POST['descrip'];
         $ddl = $_POST['duetime'];
-        echo $ddl;
+        //echo $ddl;
         $id = D('Resdir')->homework_add($fid,$name,$descrip,$ddl);
-        echo "1";
+        $data = D('Resdir')->dir_get($fid);
+        //var_dump($data);
+        $ans = json_encode($data);
+        echo $ans;
+        //echo "1";
     }
 
     public function downloadfile(){

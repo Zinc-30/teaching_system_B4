@@ -236,7 +236,7 @@
               <tbody>
                 <tr draggable="true" id="{{ 'fileRow' + $index }}" v-repeat="entry: data | filterBy searchQuery" v-on="dragend: dropOn(), dragstart: dragStart($event, $index), dragenter: dragEnter($event, $index), dragover: dragOver($event)">
                     <td class="hidden-phone" style="width: 30px; height: 30px">
-                            <img v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
+                            <img class="img-circle" v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
                     </td>
                     <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])">    
 
@@ -253,11 +253,10 @@
                         </div>
                     </td>
 
-                    <td class="hidden-phone" style="padding-left: 50px"  v-if="!data[$index].is_folder">
+                    <td class="hidden-phone" style="padding-left: 50px">
                         {{ data[$index].downloads }}
                     </td>
-                    <td class="hidden-phone" style="padding-left: 50px"  v-if="data[$index].is_folder">
-                    </td>
+
                 </tr>
               </tbody>
             </table>
