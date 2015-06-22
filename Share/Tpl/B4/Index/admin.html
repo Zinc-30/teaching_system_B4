@@ -238,7 +238,7 @@
                     <td class="hidden-phone" style="width: 30px; height: 30px">
                             <img class="img-circle" v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
                     </td>
-                    <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])">    
+                    <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])">
 
                         <div class="fileRow">{{ entry[key] }}</div>
                     </td>
@@ -247,7 +247,7 @@
                               <input type="hidden" name="rid" value="{{entry['id']}}">
                         </form>
                         <div class="btn-group" v-if="userAdmin">
-                          <button class="btn btn-info btn-row" v-on="click: downloadfile($index)"><i class="icon-circle-arrow-down"></i></button>
+                          <button class="btn btn-info btn-row" v-on="click: downloadfile($index)" v-if="!data[$index].is_folder"><i class="icon-circle-arrow-down"></i></button>
                           <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: deleteAt($index)"><i class="icon-remove"></i></button>
                           <button class="btn btn-info btn-row" role="button" data-toggle="modal" v-on="click: commentAt($index)" ><i class="icon-pencil"></i></button>
                         </div>
