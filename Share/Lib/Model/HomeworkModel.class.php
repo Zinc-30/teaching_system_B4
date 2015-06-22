@@ -35,34 +35,44 @@ class HomeworkModel extends Model {
 	}
 
 	public function file_upload($fid,$sid){
-		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
-		$path = iconv("UTF-8", "GB2312", $dir[0][url].'/'); //code transe$dir[0].;
-		var_dump($path);
-    	import('ORG.Net.UploadFile');
-	    $upload = new UploadFile();// 实例化上传类
-	    $upload->maxSize  = 3145728 ;// 设置附件上传大小
-	    $upload->allowExts  = array('docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
-	    $upload->savePath = $dir[0][url].'/';//$path;// 设置附件上传目录
-	    $upload->saveRule = '';
-	    if(!$upload->upload()) {// 上传错误提示错误信息
-	        //$this->error($upload->getErrorMsg());
-	    }else{// 上传成功
-	    	//提取数据
-	    	$info = $upload->getUploadFileInfo();
-			$in = D('Homework')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
-	    	if (!$in){
-	    		$data = array(
-		    		'name' 			=>	$info[0][savename] ,
-		    		'fid' 		=>	$fid,
-		    		'student_id'	=>	$sid,
-		    	 );
-		    	var_dump($data);
-		    	$rid = D('Homework')->data($data)->add($data);
-		    	var_dump($rid);
-		        //$this->success('上传成功！');
-		        return $rid;
-	    	}
-	    }
+		$now = date('Y-m-d H:i:s');
+		$dir = D('Resdir')->where('id='.$fid)->select();
+		dump($dir);
+		echo $now;
+		$ddl = $dir[0]['ddl'];
+		echo $ddl;
+		if ($now<=$ddl){
+			$path = iconv("UTF-8", "GB2312", $dir[0][url].'/'); //code transe$dir[0].;
+			// var_dump($path);
+	    	import('ORG.Net.UploadFile');
+		    $upload = new UploadFile();// 实例化上传类
+		    $upload->maxSize  = 3145728 ;// 设置附件上传大小
+		    $upload->allowExts  = array('docx','doc','txt','jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+		    $upload->savePath = $dir[0][url].'/';//$path;// 设置附件上传目录
+		    $upload->saveRule = '';
+		    if(!$upload->upload()) {// 上传错误提示错误信息
+		        //$this->error($upload->getErrorMsg());
+		    }else{// 上传成功
+		    	//提取数据
+		    	$info = $upload->getUploadFileInfo();
+				$in = D('Homework')->where('fid='.$fid." AND ".'name='.$info[0][savename])->select();
+		    	if (!$in){
+		    		$data = array(
+			    		'name' 			=>	$info[0][savename] ,
+			    		'fid' 		=>	$fid,
+			    		'student_id'	=>	$sid,
+			    	 );
+			    	var_dump($data);
+			    	$rid = D('Homework')->data($data)->add($data);
+			    	var_dump($rid);
+			        //$this->success('上传成功！');
+			        return $rid;
+		    	}
+		    }	
+		}else{
+			echo "out of time";
+		}
+		
     }
     //文件下载 (多个文件压缩，文件夹)
     public function file_download($id){

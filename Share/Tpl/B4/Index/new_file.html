@@ -13,7 +13,7 @@
 		<input type="submit" value="提交" >
 		</form>
 		<br/>
-	新建作业：
+	新建作业[ok]：
 		<form id="adddir" method='post' action="{:U('Teacher/newhomework')}">
 		当前fid：<INPUT type="number" name="fid"><br/>
 		名字：<INPUT type="text" name="name"><br/>
@@ -28,8 +28,9 @@
 		</form>
 		<br/>
 	提交作业：
-		<form id="addclass" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
-		课名：<INPUT type="text" name="name"><br/>
+		<form id="addclass" method='post' action="{:U('handinfile')}" enctype="multipart/form-data">
+		课名id：<INPUT type="text" name="fid"><br/>
+		学生id：<INPUT type="text" name="sid"><br/>
 		<input type="submit" value="提交" >
 		</form>
 	<br>

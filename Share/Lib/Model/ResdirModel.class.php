@@ -144,6 +144,8 @@ class ResdirModel extends Model {
                 $data[$key]['id'] = $value['id'];
                 $data[$key]['name'] = $value['name'];
                 $data[$key]['is_folder'] = false;
+                $data[$key]['author_name'] = $value['uploader'];
+                $data[$key]['duetime'] = $value['addtime'];
             }
         }else{
             $data1 = D('Resdir')->where("fid=".$fid)->select();
@@ -151,6 +153,8 @@ class ResdirModel extends Model {
                 $data[$key]['id'] = $value['id'];
                 $data[$key]['name'] = $value['name'];
                 $data[$key]['is_folder'] = true;
+                $data[$key]['author_name'] = $value['uploader'];
+                $data[$key]['duetime'] = $value['addtime'];
             }
             $k = count($data1);
             //var_dump($k);
@@ -159,6 +163,9 @@ class ResdirModel extends Model {
                 $data[$key+$k]['id'] = $value['id'];
                 $data[$key+$k]['name'] = $value['name'];
                 $data[$key+$k]['is_folder'] = false;
+                $data[$key]['author_name'] = "admin";
+                $data[$key]['duetime'] = $value['addtime'];
+                $data[$key]['downloads'] = $value['hits'];
             }
             //var_dump($data);
         }

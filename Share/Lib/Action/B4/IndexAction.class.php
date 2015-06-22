@@ -16,7 +16,7 @@ class IndexAction extends Action {
     public function userinfo(){
         $data = array(
                 'userName' =>"xin" ,
-                'userType' =>1
+                'userType' =>0
             );
         $ans = json_encode($data);
         echo $ans;
@@ -35,6 +35,8 @@ class IndexAction extends Action {
                 $data[$key]['id'] = $fid[0]['id'];
                 $data[$key]['name'] = $fid[0]['name'];
                 $data[$key]['is_folder'] = true;
+                $data[$key]['author_name'] = "admin";
+                $data[$key]['duetime'] = $fid[0]['addtime'];
             }
             //var_dump($data);
         }else{
@@ -78,13 +80,12 @@ class IndexAction extends Action {
     public function uploadfile(){
 
         $fid = (int)$_POST['fid'];
-        var_dump($fid);
         $rid = D('Resource')->file_upload($fid);
 
         // $data = D('Resdir')->dir_get($fid);
         // $ans = json_encode($data);
         // echo $ans;
-        $this->success();
+        //$this->success();
     }
 
     

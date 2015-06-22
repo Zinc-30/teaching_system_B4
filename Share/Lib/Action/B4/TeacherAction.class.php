@@ -21,7 +21,9 @@ class TeacherAction extends Action {
                 if ($fid) {
                     $data[$key]['id'] = $fid[0]['id'];
                     $data[$key]['name'] = $fid[0]['name'];
-                    $data[$key]['is_folder'] = true;    
+                    $data[$key]['is_folder'] = true;
+                    $data[$key]['author_name'] = "admin";
+                    $data[$key]['duetime'] = $fid[0]['addtime'];    
                 }
             }
             //var_dump($data);

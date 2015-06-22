@@ -43,7 +43,6 @@ class ResourceModel extends Model {
 	}
 
 	public function file_upload($fid){
-
 		$dir = D('Resdir')->where('id='.$fid)->field('url')->select();
 		$path = $dir[0][url].'/'; //code transe$dir[0].;
     	import('ORG.Net.UploadFile');
@@ -53,7 +52,7 @@ class ResourceModel extends Model {
 	    $upload->savePath = $path;// 设置附件上传目录
 	    $upload->saveRule = '';
 
-	    //var_dump($path);
+	    var_dump($path);
 	    if(!$upload->upload()) {// 上传错误提示错误信息
 	    	echo "fail";
 	    }else{// 上传成功
