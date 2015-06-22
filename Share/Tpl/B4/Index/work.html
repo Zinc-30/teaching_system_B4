@@ -190,21 +190,20 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span2">
-                <a class="btn btn-info btn-create" href="#" role="button" data-toggle="modal" v-on="click: createDlgIn()">发布作业</a>
-            </div>
-
-            <div class="span2">
+            <div class="span2" >
                 <form id="upload" method='post' style="display: none" action="{:U('uploadfile')}" enctype="multipart/form-data" >
                   <input type="text" name="fid", value="{{currentIndex}}"><br/>
                   <input name="1" id="hiddenFile" v-attr="value: fileChoose" type="file" /><br/>
                 </form>
-                <span class="btn btn-info btn-create fileinput-button">
+                <span class="btn btn-info btn-create fileinput-button" v-class="disabled: currentIndex<=0">
                     <i class="glyphicon glyphicon-plus"></i>
                     <span>上传作业</span>
                     <!-- The file input field used as target for the file upload widget -->
                     <input id="fileupload" type="file" name="files[]" multiple>
                 </span>
+            </div>
+            <div class="span2" v-if="userType > 0">
+                <a class="btn btn-info btn-create" v-class="disabled: currentIndex<=0" href="#" role="button" data-toggle="modal" v-on="click: createDlgIn()">发布作业</a>
             </div>
             <div class="span8">
             <div class="input-append">
@@ -231,7 +230,7 @@
                     {{name[key] | capitalize}}
                     <span class="arrow" v-class="reversed[key] ? 'dsc' : 'asc'"></span>
                   </th>
-                  <th style="padding-left: 40px">操作</th>
+                  <th style="padding-left: 30px">操作</th>
                   
                 </tr>
               </thead>
@@ -240,7 +239,7 @@
                     <td class="hidden-phone" style="width: 30px; height: 30px">
                             <img v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
                     </td>
-                    <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])" style="width: 180px">    
+                    <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])">    
                         <p class="fileRow">
                             <a href="/user/{{entry['author_id']}}" v-if="key == 'author'">{{ entry['author_name'] }}</a>
                         </p>
@@ -318,10 +317,19 @@
               </div>
 
               <div class="modal-body">
-                  <form id="upload" method='post' action="{:U('uploadfile')}" enctype="multipart/form-data">
-                  <input type="hidden" name="fid", value="{{uploadIndex}}"><br/>
-                  <input name="1" type="file" /><br/>
-                  <input type="submit" class="btn-info" value="上传" >
+                  <div class="hidden-phone row-fluid">
+                      <div class="span2" v-repeat="uploadPath">
+                        <span class="label label-info file-tag" >{{ name }}
+                          <i class="icon-chevron-right"></i>
+                        </span>
+                      </div>
+                  </div>
+                 
+                  <form id="uploadForm" enctype="multipart/form-data">
+                  <input  name="fid" type="hidden" value="{{uploadIndex}}"><br/>
+                  <input name="1" type="file" /><br/><br/>
+                  <input class="btn btn-info" style="width: 30px" value="上传" v-on="click: uploadForm">
+                  <input class="btn" style="width: 30px" value="取消" v-on="click: uploadDlgOut">
                   </form>
               </div>
             </div>

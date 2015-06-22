@@ -13,7 +13,7 @@ Vue.component('work-grid', {
       downloads: [],
       name: { name: '文件名', author: '发布者', duetime: '截止时间'},
       indexPath: [{id: 0, name: 'root', author_id: 0, author_name:'root', duetime: '2015-05-00', is_folder: true}],
-      curentIndex: 0,
+      currentIndex: -2,
       // 删除
       deleteIndex: -1,
       deleteFileName: '',
@@ -39,6 +39,7 @@ Vue.component('work-grid', {
       uploadIdRecord: '2',
       uploadFlag: 0,
       uploadIndex: -1,
+      uploadPath: [],
     }
   },
   created: function() {
@@ -156,7 +157,31 @@ Vue.component('work-grid', {
     uploadAt: function (index) {
         var ele = this;
         ele.uploadIndex = ele.data[index].id;
+        ele.uploadPath = ele.indexPath.slice();
+        ele.uploadPath.push(ele.data[index]);
         ele.uploadDlgIn();
+    },
+
+    uploadForm: function() {
+      var ele = this;
+      var formData = new FormData($('#uploadForm')[0]);
+      $.ajax({
+          url: ele.prefixUrl + '/Index/uploadfile',
+          type: 'POST',
+          data: formData,
+          success: function(res) {
+            ele.data = res;
+            ele.uploadDlgOut();
+          },
+          error: function(res, status, e) {
+            ele.errorDlgIn(res.status+' '+e);
+          },
+          cache: false,
+          contentType: false,
+          processData: false,
+          async: false
+      });
+          
     },
 
     deleteFile: function () {

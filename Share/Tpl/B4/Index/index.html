@@ -188,7 +188,7 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span2">
-            <a class="btn btn-info btn-create" href="#" role="button" data-toggle="modal" v-on="click: createDlgIn()">创建目录</a>
+            <a class="btn btn-info btn-create" v-class="disabled: currentIndex<=0" href="#" role="button" data-toggle="modal" v-on="click: createDlgIn()">创建目录</a>
         </div>
 
         <div class="span2">
@@ -197,7 +197,7 @@
               <input type="text" name="fid", value="{{currentIndex}}"><br/>
               <input name="1" id="hiddenFile" v-attr="value: fileChoose" type="file" /><br/>
             </form>
-            <span class="btn btn-info btn-create fileinput-button">
+            <span class="btn btn-info btn-create fileinput-button" v-class="disabled: currentIndex<=0">
                 <i class="glyphicon glyphicon-plus"></i>
                 <span>上传文件</span>
                 <!-- The file input field used as target for the file upload widget -->
@@ -239,7 +239,7 @@
                     <td class="hidden-phone" style="width: 30px; height: 30px">
                             <img class="img-circle" v-attr="src: entry['picUrl']"  style="width: 30px; height: 30px"></img>
                     </td>
-                    <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])" style="width: 180px">    
+                    <td v-repeat="key: columns" v-on="click: changeDir(entry['id'])">    
 
                         <p class="fileRow" v-if="key != 'author'">{{ entry[key] }}</p>
                     </td>
